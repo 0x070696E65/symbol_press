@@ -1,0 +1,14 @@
+{
+  "name": "symbol-blockchain-community/symbol-transactions",
+  "description": "A WordPress plugin for Symbol Transactions",
+  "type": "wordpress-plugin",
+  "require": {
+    "symbol-blockchain-community/symbol-rest-client": "^1.0",
+    "symbol-blockchain-community/symbol-sdk": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "SymbolPress\\": "src/"
+    }
+  }
+}
