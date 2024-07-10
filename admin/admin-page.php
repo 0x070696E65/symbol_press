@@ -41,12 +41,12 @@ function my_plugin_section_callback() {
 }
 
 function my_plugin_field_render() {
-  $options = get_option('my_plugin_options');
-  $value = isset($options['my_plugin_field']) ? $options['my_plugin_field'] : '';
+    $options = get_option('my_plugin_options');
+    $value = isset($options['my_plugin_field']) ? $options['my_plugin_field'] : '';
 
-  ?>
-  <input type='text' name='my_plugin_options[my_plugin_field]' value='<?php echo esc_attr($value); ?>'>
-  <?php
+    ?>
+    <input type='text' name='my_plugin_options[my_plugin_field]' value='<?php echo esc_attr($value); ?>'>
+    <?php
 }
 
 function my_plugin_display_message() {

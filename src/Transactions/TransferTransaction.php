@@ -13,59 +13,29 @@ use SymbolSdk\Symbol\Models\UnresolvedMosaicId;
 use SymbolSdk\Symbol\Models\UnresolvedAddress;
 
 class TransferTransaction extends BaseTransaction {
+  private const FIELDS = [
+    'recipient_address' => [
+      'type' => 'text'
+    ],
+    'mosaic_id' => [
+      'type' => 'text'
+    ],
+    'mosaic_amount' => [
+      'type' => 'number'
+    ],
+    'message' => [
+      'type' => 'text'
+    ]
+  ];
+
   public function __construct($atts)
   {
-    $atts = shortcode_atts( array(
-      'recipient_address' => '',
-      'mosaic_id' => '',
-      'mosaic_amount' => '',
-      'message' => '',
-      'private_key' => '',
-      'is_inner' => 'false',
-      'transaction_type' => 'transfer',
-      'label' => ''
-    ), $atts);
-
-    if ($atts['label'] == 'null') {
-      $this->label = null;
-    } elseif ($atts['label'] == '') {
-      $this->label = 'TransferTransaction';
-    } else {
-      $this->label = $atts['label'];
-    }
-  
-    parent::__construct($atts);
-    $this->generateFields($atts);
+    parent::__construct($atts, self::FIELDS);
   }
 
-  private function generateFields($atts){
-    $fields = [
-      [
-        'type' => 'text',
-        'id' => 'recipient_address',
-        'label' => 'RecipientAddress',
-        'value' => $atts['recipient_address'],
-      ],
-      [
-        'type' => 'text',
-        'id' => 'mosaic_id',
-        'label' => 'MosaicId',
-        'value' => $atts['mosaic_id'],
-      ],
-      [
-        'type' => 'number',
-        'id' => 'mosaic_amount',
-        'label' => 'MosaicAmount',
-        'value' => $atts['mosaic_amount'],
-      ],
-      [
-        'type' => 'text',
-        'id' => 'message',
-        'label' => 'Message',
-        'value' => $atts['message'],
-      ],
-    ];
-    $this->fields = array_merge($this->fields, $fields);
+  public function getName()
+  {
+    return substr(self::class, strrpos(self::class, '\\') + 1);
   }
 
   public static function createTransaction(SymbolService $symbolService, array $arrgs, bool $isEmbedded){
@@ -97,4 +67,10 @@ class TransferTransaction extends BaseTransaction {
     }
     return $transaction;
   }
+
+  public static function drawForm($atts){
+    $tx = new self($atts);
+    return $tx->_drawForm();
+  }
 }
+

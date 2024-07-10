@@ -19,7 +19,6 @@ jQuery(document).ready(function ($) {
       data: formData,
       success: function (response) {
         if (response.success) {
-          console.log(response.data)
           $('#transactions-' + response.data.id).append(response.data.content)
         } else {
           console.error('Error loading content')

@@ -10,49 +10,24 @@ use SymbolSdk\Symbol\Models\PublicKey;
 use SymbolSdk\Symbol\Models\LinkAction;
 
 class NodeKeyLinkTransaction extends BaseTransaction {
-  public function __construct($atts)
-  {
-    $atts = shortcode_atts( array(
-      'linked_public_key' => '',
-      'link_action' => '',
-      'private_key' => '',
-      'is_inner' => 'false',
-      'transaction_type' => 'node_key_link',
-      'label' => ''
-    ), $atts);
+  private const FIELDS = [
+    'linked_public_key' => [
+      'type' => 'text'
+    ],
+    'link_action' => [
+      'type' => 'radio',
+      'options' => ['link', 'unlink']
+    ]
+  ];
 
-    if ($atts['label'] == 'null') {
-      $this->label = null;
-    } elseif ($atts['label'] == '') {
-      $this->label = 'NodeKeyLinkTransaction';
-    } else {
-      $this->label = $atts['label'];
-    }
-  
-    parent::__construct($atts);
-    $this->generateFields($atts);
+  public function __construct($atts)
+  {  
+    parent::__construct($atts, self::FIELDS);
   }
 
-  private function generateFields($atts){
-    $fields = [
-      [
-        'type' => 'text',
-        'id' => 'linked_public_key',
-        'label' => 'LinkedPublicKey',
-        'value' => $atts['linked_public_key'],
-      ],
-      [
-        'type' => 'radio',
-        'id' => 'link_action',
-        'label' => 'LinkAction',
-        'value' => isset($atts['link_action']) ? $atts['link_action'] : '',
-        'options' => [
-          'link' => 'Link',
-          'unlink' => 'Unlink',
-        ],
-      ],
-    ];
-    $this->fields = array_merge($this->fields, $fields);
+  public function getName()
+  {
+    return substr(self::class, strrpos(self::class, '\\') + 1);
   }
 
   public static function createTransaction(SymbolService $symbolService, array $arrgs, bool $isEmbedded){
@@ -70,5 +45,10 @@ class NodeKeyLinkTransaction extends BaseTransaction {
     $transaction->linkAction = new LinkAction(sanitize_text_field($arrgs['action']) == 'link' ? 1 : 0);
 
     return $transaction;
+  }
+
+  public static function drawForm($atts){
+    $tx = new self($atts);
+    return $tx->_drawForm();
   }
 }

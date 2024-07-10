@@ -14,59 +14,29 @@ use SymbolSdk\Symbol\Models\BlockDuration;
 use SymbolSdk\Symbol\Models\Hash256;
 
 class HashLockTransaction extends BaseTransaction {
+  private const FIELDS = [
+    'mosaic_id' => [
+      'type' => 'text'
+    ],
+    'mosaic_amount' => [
+      'type' => 'number'
+    ],
+    'duration' => [
+      'type' => 'number'
+    ],
+    'hash' => [
+      'type' => 'text'
+    ]
+  ];
+
   public function __construct($atts)
   {
-    $atts = shortcode_atts( array(
-      'mosaic_id' => '',
-      'mosaic_amount' => '',
-      'duration' => '',
-      'hash' => '',
-      'private_key' => '',
-      'is_inner' => 'false',
-      'transaction_type' => 'hash_lock',
-      'label' => ''
-    ), $atts);
-
-    if ($atts['label'] == 'null') {
-      $this->label = null;
-    } elseif ($atts['label'] == '') {
-      $this->label = 'HashLockTransaction';
-    } else {
-      $this->label = $atts['label'];
-    }
-  
-    parent::__construct($atts);
-    $this->generateFields($atts);
+    parent::__construct($atts, self::FIELDS);
   }
 
-  private function generateFields($atts){
-    $fields = [
-      [
-        'type' => 'text',
-        'id' => 'mosaic_id',
-        'label' => 'MosaicId',
-        'value' => $atts['mosaic_id'],
-      ],
-      [
-        'type' => 'number',
-        'id' => 'mosaic_amount',
-        'label' => 'MosaicAmount',
-        'value' => $atts['mosaic_amount'],
-      ],
-      [
-        'type' => 'number',
-        'id' => 'duration',
-        'label' => 'Duration',
-        'value' => $atts['duration'],
-      ],
-      [
-        'type' => 'text',
-        'id' => 'hash',
-        'label' => 'Hash',
-        'value' => $atts['hash'],
-      ],
-    ];
-    $this->fields = array_merge($this->fields, $fields);
+  public function getName()
+  {
+    return substr(self::class, strrpos(self::class, '\\') + 1);
   }
 
   public static function createTransaction(SymbolService $symbolService, array $arrgs, bool $isEmbedded){
@@ -95,5 +65,10 @@ class HashLockTransaction extends BaseTransaction {
     $transaction->hash = new Hash256($hash);
 
     return $transaction;
+  }
+
+  public static function drawForm($atts){
+    $tx = new self($atts);
+    return $tx->_drawForm();
   }
 }

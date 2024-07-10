@@ -12,63 +12,24 @@ use SymbolSdk\Symbol\Models\LinkAction;
 use SymbolSdk\Symbol\Models\FinalizationEpoch;
 
 class VotingKeyLinkTransaction extends BaseTransaction {
-  public function __construct($atts)
-  {
-    $atts = shortcode_atts( array(
-      'linked_public_key' => '',
-      'link_action' => '',
-      'start_epoch' => '',
-      'end_epoch' => '',
-      'private_key' => '',
-      'is_inner' => 'false',
-      'transaction_type' => 'voting_key_link',
-      'label' => ''
-    ), $atts);
+  private const FIELDS = [
+    'linked_public_key' => [
+      'type' => 'text'
+    ],
+    'link_action' => [
+      'type' => 'radio',
+      'options' => ['link', 'unlink']
+    ]
+  ];
 
-    if ($atts['label'] == 'null') {
-      $this->label = null;
-    } elseif ($atts['label'] == '') {
-      $this->label = 'VotingKeyLinkTransaction';
-    } else {
-      $this->label = $atts['label'];
-    }
-  
-    parent::__construct($atts);
-    $this->generateFields($atts);
+  public function __construct($atts)
+  {  
+    parent::__construct($atts, self::FIELDS);
   }
 
-  private function generateFields($atts){
-    $fields = [
-      [
-        'type' => 'text',
-        'id' => 'linked_public_key',
-        'label' => 'LinkedPublicKey',
-        'value' => $atts['linked_public_key'],
-      ],
-      [
-        'type' => 'radio',
-        'id' => 'link_action',
-        'label' => 'LinkAction',
-        'value' => isset($atts['link_action']) ? $atts['link_action'] : '',
-        'options' => [
-          'link' => 'Link',
-          'unlink' => 'Unlink',
-        ],
-      ],
-      [
-        'type' => 'number',
-        'id' => 'start_epoch',
-        'label' => 'StartEpoch',
-        'value' => $atts['start_epoch'],
-      ],
-      [
-        'type' => 'number',
-        'id' => 'end_epoch',
-        'label' => 'EndEpoch',
-        'value' => $atts['end_epoch'],
-      ]
-    ];
-    $this->fields = array_merge($this->fields, $fields);
+  public function getName()
+  {
+    return substr(self::class, strrpos(self::class, '\\') + 1);
   }
 
   public static function createTransaction(SymbolService $symbolService, array $arrgs, bool $isEmbedded){
@@ -90,5 +51,10 @@ class VotingKeyLinkTransaction extends BaseTransaction {
     $transaction->endEpoch = new FinalizationEpoch($end_epoch);
 
     return $transaction;
+  }
+
+  public static function drawForm($atts){
+    $tx = new self($atts);
+    return $tx->_drawForm();
   }
 }

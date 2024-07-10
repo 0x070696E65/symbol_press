@@ -1,6 +1,7 @@
 <?php
 
 namespace SymbolPress;
+use SymbolPress\Utils;
 
 class AjaxHandler{
   public static function generate_mosaic_id_ajax_handler() {
@@ -32,22 +33,17 @@ class AjaxHandler{
   }
 
   public static function send_tranasction_ajax_handler() {
+    $transactionDefinitions = include(plugin_dir_path(__FILE__) . 'Transactions/transaction_definitions.php');
     $node = 'http://sym-test-01.opening-line.jp:3000';
     check_ajax_referer('symbol_press_nonce', 'nonce');
     $transactionType = sanitize_text_field($_POST['transaction_type']);
 
-    switch ($transactionType){
-      case 'transfer':
-        $result = Transactions\TransferTransaction::excuteTransaction($node, $_POST);
+    foreach($transactionDefinitions as $transactionName) {
+      if($transactionType == Utils::pascalToSnake($transactionName)) {
+        $transactionClass = 'SymbolPress\\Transactions\\' . $transactionName;
+        $result = $transactionClass::excuteTransaction($node, $_POST);
         self::showResult($result);
-        break;
-      case 'aggregate_complete':
-        $result = Transactions\AggregateCompleteTransaction::excuteTransaction($node, $_POST);
-        self::showResult($result);
-        break;
-      default:
-        wp_send_json_success('invalid transaction type');
-          break;
+      }
     }
   }
 

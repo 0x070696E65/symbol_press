@@ -7,7 +7,7 @@ jQuery(document).ready(function ($) {
       var signerPublicKey = $(this).val()
 
       // transactionTypeがmosaic_definitionで、signerPublicKeyが64文字の場合のみ処理を実行
-      if (transactionType === 'mosaic_definition' && signerPublicKey.length === 64) {
+      if (transactionType === 'mosaic_definition_transaction' && signerPublicKey.length === 64) {
         // Ajaxリクエストを送信
         $.ajax({
           type: 'POST',

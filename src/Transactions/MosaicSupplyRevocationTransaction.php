@@ -3,25 +3,24 @@
 namespace SymbolPress\Transactions;
 
 use SymbolPress\SymbolService;
-use SymbolSdk\Symbol\Models\MosaicSupplyChangeTransactionV1;
-use SymbolSdk\Symbol\Models\EmbeddedMosaicSupplyChangeTransactionV1;
+use SymbolSdk\Symbol\Models\MosaicSupplyRevocationTransactionV1;
+use SymbolSdk\Symbol\Models\EmbeddedMosaicSupplyRevocationTransactionV1;
 use SymbolSdk\Symbol\Models\NetworkType;
 use SymbolSdk\Symbol\Models\PublicKey;
 use SymbolSdk\Symbol\Models\Amount;
+use SymbolSdk\Symbol\Models\UnresolvedAddress;
+use SymbolSdk\Symbol\Models\UnresolvedMosaic;
 use SymbolSdk\Symbol\Models\UnresolvedMosaicId;
-use SymbolSdk\Symbol\Models\MosaicSupplyChangeAction;
 
-
-class MosaicSupplyChangeTransaction extends BaseTransaction {
+class MosaicSupplyRevocationTransaction extends BaseTransaction {
   private const FIELDS = [
+    'source_address' => [
+      'type' => 'text'
+    ],
     'mosaic_id' => [
       'type' => 'text'
     ],
-    'action' => [
-      'type' => 'radio',
-      'options' => ['increase', 'decrease']
-    ],
-    'delta' => [
+    'amount' => [
       'type' => 'number'
     ],
   ];
@@ -38,21 +37,26 @@ class MosaicSupplyChangeTransaction extends BaseTransaction {
 
   public static function createTransaction(SymbolService $symbolService, array $arrgs, bool $isEmbedded){
     if(!$isEmbedded){
-      $transaction = new MosaicSupplyChangeTransactionV1();
+      $transaction = new MosaicSupplyRevocationTransactionV1();
       $symbolService->createTransactionHeader($transaction, $arrgs);
     } else {
-      $transaction = new EmbeddedMosaicSupplyChangeTransactionV1(
+      $transaction = new EmbeddedMosaicSupplyRevocationTransactionV1(
         signerPublicKey: new PublicKey($arrgs['signer_public_key']),
         network: new NetworkType($symbolService->facade->network->identifier)
       );
     }
     
+    $source_address = sanitize_text_field($arrgs['source_address']);
     $mosaicId = sanitize_text_field($arrgs['mosaic_id']);
-    $delta = intval($arrgs['delta']);
+    $amount = intval($arrgs['amount']);
 
-    $transaction->mosaicId = new UnresolvedMosaicId('0x' . $mosaicId);
-    $transaction->delta = new Amount($delta);
-    $transaction->action = new MosaicSupplyChangeAction(sanitize_text_field($arrgs['action']) == 'increase' ? 1 : 0);
+    $mosaic = new UnresolvedMosaic(
+      mosaicId: new UnresolvedMosaicId('0x' . $mosaicId),
+      amount: new Amount($amount)
+    );
+
+    $transaction->mosaic = $mosaic;
+    $transaction->sourceAddress = new UnresolvedAddress($source_address);
 
     return $transaction;
   }

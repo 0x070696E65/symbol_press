@@ -4,44 +4,81 @@ namespace SymbolPress\Transactions;
 
 use SymbolPress\SymbolService;
 use SymbolSdk\CryptoTypes\PrivateKey;
+use SymbolPress\Utils;
 
 abstract class BaseTransaction {
   public array $fields;
   public string $isInner;
   public ?string $label = '';
-  public function __construct($atts)
+  public function __construct(&$atts, array $fields)
   {
+    $base_atts = array(
+      'private_key' => '',
+      'is_inner' => 'false',
+      'transaction_type' => Utils::pascalToSnake($this->getName()),
+      'label' => ''
+    );
+    foreach($fields as $key => $value) {
+      $base_atts += [$key => ''];
+    }
+    $atts = shortcode_atts($base_atts, $atts);
+    if ($atts['label'] == 'null') {
+      $this->label = null;
+    } elseif ($atts['label'] == '') {
+      $this->label = $this->getName();
+    } else {
+      $this->label = $atts['label'];
+    }
     $this->isInner = $atts['is_inner'];
-    $this->fields = self::generateFieldsHeader($atts);
+    $this->fields = self::generateFields($atts, $fields);
   }
 
-  private static function generateFieldsHeader($atts){
-    $fields = [[
+  private static function generateFields($atts, $fields){
+    $form_fields = [[
       'type' => 'hidden',
       'id' => 'transaction_type',
       'value' => $atts['transaction_type'],
     ]];
     if($atts['is_inner'] == "true") {
-      $additionalFields = [[
+      array_push($form_fields, [
         'type' => 'text',
         'id' => 'signer_public_key',
         'label' => 'SignerPublicKey',
         'value' => isset($atts['signer_public_key']) ? $atts['signer_public_key'] : '',
-      ]];
+      ]);
     } else {
-      $additionalFields = [[
+      array_push($form_fields, [
         'type' => 'text',
         'id' => 'private_key',
         'label' => 'PrivateKey',
         'value' => $atts['private_key'],
-      ]];
+      ]);
     }
-    $fields = array_merge($fields, $additionalFields);
+    foreach($fields as $field => $details) {
+      $fieldData = [
+        'type' => $details['type'],
+        'id' => $field,
+        'label' => Utils::snakeToPascal($field),
+        'value' => $atts[$field],
+      ];
 
-    return $fields;
+      if ($details['type'] == 'radio') {
+        if (isset($details['options']) && is_array($details['options']))
+          $options = $details['options'];
+
+        $fieldData['options'] = [];
+
+        // options の値を設定
+        foreach ($options as $option) {
+          $fieldData['options'][$option] = Utils::snakeToPascal($option);
+        }
+      }
+      array_push($form_fields, $fieldData);
+    }
+    return $form_fields;
   }
 
-  public function drawForm($innerTransactions = null, $hasAddButtton = true){
+  protected function _drawForm($innerTransactions = null, $hasAddButtton = true){
     ob_start();
     extract([
       'fields' => $this->fields,
@@ -66,5 +103,7 @@ abstract class BaseTransaction {
     return $symbolService->accounceTransaction($signedTransaction);
   }
 
+  abstract public function getName();
   abstract public static function createTransaction(SymbolService $symbolService, array $arrgs, bool $isEmbedded);
+  abstract public static function drawForm($atts);
 }

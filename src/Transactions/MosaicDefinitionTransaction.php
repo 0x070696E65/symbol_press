@@ -13,93 +13,45 @@ use SymbolSdk\Symbol\Models\BlockDuration;
 use SymbolSdk\Symbol\Models\MosaicNonce;
 
 class MosaicDefinitionTransaction extends BaseTransaction {
+  private const FIELDS = [
+    'supply_mutable' => [
+      'type' => 'radio',
+      'options' => ['true', 'false']
+    ],
+    'transferable' => [
+      'type' => 'radio',
+      'options' => ['true', 'false']
+    ],
+    'restrictable' => [
+      'type' => 'radio',
+      'options' => ['true', 'false']
+    ],
+    'revokable' => [
+      'type' => 'radio',
+      'options' => ['true', 'false']
+    ],
+    'mosaic_id' => [
+      'type' => 'text'
+    ],
+    'mosaic_nonce' => [
+      'type' => 'hidden'
+    ],
+    'duration' => [
+      'type' => 'number'
+    ],
+    'divisibility' => [
+      'type' => 'number'
+    ]
+  ];
+
   public function __construct($atts)
   {
-    $atts = shortcode_atts( array(
-      'supply_mutable' => '',
-      'transferable' => '',
-      'restrictable' => '',
-      'revokable' => '',
-      'mosaic_id' => '',
-      'nonce' => '',
-      'duration' => '',
-      'divisibility' => '',
-      'private_key' => '',
-      'is_inner' => 'false',
-      'transaction_type' => 'mosaic_definition'
-    ), $atts);
-    $this->label = 'MosaicDefinitionTransaction';
-    parent::__construct($atts);
-    $this->generateFields($atts);
+    parent::__construct($atts, self::FIELDS);
   }
 
-  private function generateFields($atts){
-    $fields = [
-      [
-        'type' => 'radio',
-        'id' => 'supply_mutable',
-        'label' => 'SupplyMutable',
-        'value' => isset($atts['supply_mutable']) ? $atts['supply_mutable'] : '',
-        'options' => [
-          'true' => 'True',
-          'false' => 'False',
-        ],
-      ],
-      [
-        'type' => 'radio',
-        'id' => 'transferable',
-        'label' => 'Transferable',
-        'value' => isset($atts['transferable']) ? $atts['transferable'] : '',
-        'options' => [
-          'true' => 'True',
-          'false' => 'False',
-        ],
-      ],
-      [
-        'type' => 'radio',
-        'id' => 'restrictable',
-        'label' => 'Restrictable',
-        'value' => isset($atts['restrictable']) ? $atts['restrictable'] : '',
-        'options' => [
-          'true' => 'True',
-          'false' => 'False',
-        ],
-      ],
-      [
-        'type' => 'radio',
-        'id' => 'revokable',
-        'label' => 'Revokable',
-        'value' => isset($atts['revokable']) ? $atts['revokable'] : '',
-        'options' => [
-          'true' => 'True',
-          'false' => 'False',
-        ],
-      ],
-      [
-        'type' => 'text',
-        'id' => 'mosaic_id',
-        'label' => 'MosaicId',
-        'value' => $atts['mosaic_id'],
-      ],
-      [
-        'type' => 'hidden',
-        'id' => 'mosaic_nonce',
-        'value' => isset($atts['mosaic_nonce']) ? $atts['mosaic_nonce'] : '',
-      ],
-      [
-        'type' => 'number',
-        'id' => 'duration',
-        'label' => 'Duration',
-        'value' => $atts['duration'],
-      ],
-      [
-        'type' => 'text',
-        'id' => 'divisibility',
-        'label' => 'Divisibility',
-        'value' => $atts['divisibility'],
-      ],
-    ];
-    $this->fields = array_merge($this->fields, $fields);
+  public function getName()
+  {
+    return substr(self::class, strrpos(self::class, '\\') + 1);
   }
 
   public static function createTransaction(SymbolService $symbolService, array $arrgs, bool $isEmbedded){
@@ -131,5 +83,10 @@ class MosaicDefinitionTransaction extends BaseTransaction {
     $transaction->flags = new MosaicFlags($flags);
 
     return $transaction;
+  }
+
+  public static function drawForm($atts){
+    $tx = new self($atts);
+    return $tx->_drawForm();
   }
 }
