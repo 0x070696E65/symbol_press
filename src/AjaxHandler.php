@@ -74,8 +74,34 @@ class AjaxHandler{
 
     // JSON レスポンスを返す
     wp_send_json_success(array(
-        'content' => $new_content,
-        'id' => $transaction_id, // 取得したトランザクションIDを返す
+      'content' => $new_content,
+      'id' => $transaction_id, // 取得したトランザクションIDを返す
+    ));
+    wp_die();
+  }
+
+  public static function add_array_form_ajax_handler(){
+    check_ajax_referer('add_array_form_nonce', 'nonce');
+    $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
+    $arrays = isset($_POST['arrays']) ? sanitize_text_field($_POST['arrays']) : '';
+    $arrays = explode(',', $arrays);
+
+    $child_suffix = bin2hex(random_bytes(2));
+    $output = '<div id="field-' . $child_suffix . '">';
+    foreach($arrays as $array) {
+      $keyValue = explode('\\\\', $array);
+      $output .= '<div class="custom-input-wrapper">';
+      $output .= '<input type="' . $keyValue[1] . '" id="' . $id . '-' . $keyValue[0] . '-' . $child_suffix . '" name="' . $id . '-' . $keyValue[0] . '-' . $child_suffix . '">';
+      $output .= '<label for="' . $id . '-' . $keyValue[0] . '-' . $child_suffix . '">' . Utils::snakeToPascal($keyValue[0]) . '</label>';
+      $output .= '</div>';
+    }
+    $output .= '<button class="remove-field-' . $child_suffix . '">削除</button>';
+    $output .= '</div>';
+
+    wp_send_json_success(array(
+      'id' => $id,
+      'content' => $output,
+      'child_suffix' => $child_suffix
     ));
     wp_die();
   }

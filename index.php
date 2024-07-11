@@ -39,6 +39,9 @@ function symbol_press_enqueue_scripts() {
 
   wp_enqueue_script('generate-mosaic-id-script', plugin_dir_url(__FILE__) . 'public/js/generate-mosaic-id.js', array('jquery'), null, true);
   wp_localize_script('generate-mosaic-id-script', 'generate_mosaic_id', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('generate_mosaic_id_nonce')));
+
+  wp_enqueue_script('add-array-form-script', plugin_dir_url(__FILE__) . 'public/js/add-array-form.js', array('jquery'), null, true);
+  wp_localize_script('add-array-form-script', 'add_array_form', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('add_array_form_nonce')));
 }
 
 add_action('wp_enqueue_scripts', 'symbol_press_enqueue_scripts');
@@ -52,3 +55,6 @@ add_action('wp_ajax_nopriv_load_content', array('SymbolPress\AjaxHandler', 'load
 
 add_action('wp_ajax_send_transaction', array('SymbolPress\AjaxHandler', 'send_tranasction_ajax_handler'));
 add_action('wp_ajax_nopriv_send_transaction', array('SymbolPress\AjaxHandler', 'send_tranasction_ajax_handler'));
+
+add_action('wp_ajax_add_array_form', array('SymbolPress\AjaxHandler', 'add_array_form_ajax_handler'));
+add_action('wp_ajax_nopriv_add_array_form', array('SymbolPress\AjaxHandler', 'add_array_form_ajax_handler'));

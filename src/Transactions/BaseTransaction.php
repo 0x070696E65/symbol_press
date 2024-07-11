@@ -18,19 +18,41 @@ abstract class BaseTransaction {
       'transaction_type' => Utils::pascalToSnake($this->getName()),
       'label' => ''
     );
+
     foreach($fields as $key => $value) {
       $base_atts += [$key => ''];
     }
-    $atts = shortcode_atts($base_atts, $atts);
-    if ($atts['label'] == 'null') {
+    $atts2 = shortcode_atts($base_atts, $atts);
+
+    foreach($fields as $key => $value) {
+      if(is_array($value['type'])) {
+        $atts2[$key] = [];
+        foreach($value['type'] as $valueTypeKey => $valueTypeValue){
+          $inner = [];
+          foreach($atts as $attsKey => $attsValue) {
+            $attsKeyArray = explode('-', $attsKey);
+            if($attsKeyArray[0] == $valueTypeKey) {
+              $arr = [
+                $attsKey => $attsValue
+              ];
+              array_push($inner, $arr);
+            }
+          }
+          if(count($inner) != 0) array_push($atts2[$key], $inner);
+        }
+      }
+    }
+
+    if ($atts2['label'] == 'null') {
       $this->label = null;
-    } elseif ($atts['label'] == '') {
+    } elseif ($atts2['label'] == '') {
       $this->label = $this->getName();
     } else {
-      $this->label = $atts['label'];
+      $this->label = $atts2['label'];
     }
-    $this->isInner = $atts['is_inner'];
-    $this->fields = self::generateFields($atts, $fields);
+    $this->isInner = $atts2['is_inner'];
+
+    $this->fields = self::generateFields($atts2, $fields);
   }
 
   private static function generateFields($atts, $fields){
@@ -54,6 +76,7 @@ abstract class BaseTransaction {
         'value' => $atts['private_key'],
       ]);
     }
+
     foreach($fields as $field => $details) {
       $fieldData = [
         'type' => $details['type'],

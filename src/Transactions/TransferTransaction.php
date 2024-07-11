@@ -2,6 +2,7 @@
 
 namespace SymbolPress\Transactions;
 
+use Error;
 use SymbolPress\SymbolService;
 use SymbolSdk\Symbol\Models\Amount;
 use SymbolSdk\Symbol\Models\TransferTransactionV1;
@@ -17,11 +18,15 @@ class TransferTransaction extends BaseTransaction {
     'recipient_address' => [
       'type' => 'text'
     ],
-    'mosaic_id' => [
-      'type' => 'text'
-    ],
-    'mosaic_amount' => [
-      'type' => 'number'
+    'mosaic' => [
+      'type' => [
+        'mosaic_id' => [
+          'type' => 'text'
+        ],
+        'mosaic_amount' => [
+          'type' => 'number'
+        ]
+      ]
     ],
     'message' => [
       'type' => 'text'
@@ -49,22 +54,22 @@ class TransferTransaction extends BaseTransaction {
       );
     }
     $recipientAddress = sanitize_text_field($arrgs['recipient_address']);
-    $mosaicId = sanitize_text_field($arrgs['mosaic_id']);
-    $mosaicAmount = intval($arrgs['mosaic_amount']);
     $message = sanitize_text_field($arrgs['message']);
 
-    $transaction->recipientAddress = new UnresolvedAddress($recipientAddress);
+    $mosaics = [];
+    foreach($arrgs['mosaic'] as $mosaic) {
+      array_push($mosaics, new UnresolvedMosaic(
+        mosaicId: new UnresolvedMosaicId('0x' . sanitize_text_field($mosaic['mosaic_id'])),
+        amount: new Amount(intval($mosaic['mosaic_amount']))
+      ));
+    }
 
-    if ($mosaicId != null) {
-      $mosaic = new UnresolvedMosaic(
-        mosaicId: new UnresolvedMosaicId('0x' . $mosaicId),
-        amount: new Amount(intval($mosaicAmount))
-      );
-      array_push($transaction->mosaics, $mosaic);
-    }
-    if ($message != null) {
+    $transaction->recipientAddress = new UnresolvedAddress($recipientAddress);
+    $transaction->mosaics = $mosaics;
+
+    if ($message != null)
       $transaction->message = "\x00" . $message;
-    }
+
     return $transaction;
   }
 
