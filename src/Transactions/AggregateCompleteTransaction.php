@@ -45,7 +45,7 @@ class AggregateCompleteTransaction extends BaseTransaction {
       transactions: $transactions,
       transactionsHash: $merkleHash
     );
-    $symbolService->createTransactionHeader($transaction, $arrgs);
+    $symbolService->createTransactionHeader($transaction, $arrgs, true);
     return $transaction;
   }
 
@@ -55,12 +55,24 @@ class AggregateCompleteTransaction extends BaseTransaction {
       'has_add_button' => 'true'
     ), $atts);
     if ($innerTransactions) {
-      $innerTransactions = preg_replace_callback('/\[(\w+_transaction)(.*?)\]/', function ($matches) {
-        return '[' . $matches[1] . $matches[2] . ' is_inner="true" is_short_code="true"]';
-      }, $innerTransactions);
+      $innerTransactions = self::add_attributes_to_transaction_shortcode($innerTransactions);
     }
+
     $innerTransactions = do_shortcode($innerTransactions);
     $tx = new Transactions\AggregateCompleteTransaction($atts);
     return $tx->_drawForm($innerTransactions, $atts['has_add_button']);
+  }
+
+  private static function add_attributes_to_transaction_shortcode($shortcode) {
+    if (preg_match_all('/\[(\w+_transaction)([^\]]*)\]/', $shortcode, $matches, PREG_SET_ORDER)) {
+        foreach ($matches as $match) {           
+            $shortcode_name = $match[1];
+            $existing_attributes = $match[2];
+            $new_attributes = ' is_inner="true" is_short_code="true"';
+            $new_shortcode = "[$shortcode_name$existing_attributes$new_attributes]";
+            $shortcode = str_replace($match[0], $new_shortcode, $shortcode);
+        }
+    }
+    return $shortcode;
   }
 }

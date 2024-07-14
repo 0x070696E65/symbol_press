@@ -42,7 +42,7 @@ class AccountKeyLinkTransaction extends BaseTransaction {
     }
     $linked_public_key = sanitize_text_field($arrgs['linked_public_key']);
     $transaction->linkedPublicKey = new PublicKey($linked_public_key);
-    $transaction->linkAction = new LinkAction(sanitize_text_field($arrgs['action']) == 'link' ? 1 : 0);
+    $transaction->linkAction = new LinkAction(sanitize_text_field($arrgs['link_action']) == 'link' ? 1 : 0);
 
     return $transaction;
   }

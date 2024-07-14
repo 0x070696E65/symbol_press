@@ -3,13 +3,7 @@
 namespace SymbolPress\Transactions;
 
 use SymbolPress\SymbolService;
-use SymbolSdk\CryptoTypes\PrivateKey;
 use SymbolPress\Utils;
-use SymbolSdk\Symbol\Models\Cosignature;
-use SymbolSdk\Symbol\Models\Signature;
-use SymbolSdk\Symbol\Models\PublicKey;
-use SymbolSdk\Symbol\Models\TransactionFactory;
-use SymbolSdk\Symbol\KeyPair;
 
 abstract class BaseTransaction {
   public array $fields;
@@ -80,13 +74,14 @@ abstract class BaseTransaction {
         ],
         'value' => isset($atts['sign_mode']) ? $atts['sign_mode'] : '',
       ]);
+    } else {
+      array_push($form_fields, [
+        'type' => 'text',
+        'id' => 'signer_public_key',
+        'label' => 'SignerPublicKey',
+        'value' => isset($atts['signer_public_key']) ? $atts['signer_public_key'] : '',
+      ]);
     }
-    array_push($form_fields, [
-      'type' => 'text',
-      'id' => 'signer_public_key',
-      'label' => 'SignerPublicKey',
-      'value' => isset($atts['signer_public_key']) ? $atts['signer_public_key'] : '',
-    ]);
 
     foreach($fields as $field => $details) {
       $fieldData = [
@@ -96,7 +91,7 @@ abstract class BaseTransaction {
         'value' => $atts[$field],
       ];
 
-      if ($details['type'] == 'radio') {
+      if ($details['type'] == 'radio' || $details['type'] == 'check') {
         if (isset($details['options']) && is_array($details['options']))
           $options = $details['options'];
 
@@ -129,32 +124,11 @@ abstract class BaseTransaction {
 
   public static function excuteTransaction($node, array $arrgs, bool $isEmbedded = false, $cosignatureCount = 0){
     $symbolService = new SymbolService($node);
-    //$privateKey = new PrivateKey(sanitize_text_field($arrgs['private_key']));
-    //$account = $symbolService->facade->createAccount($privateKey);
-    //$arrgs['signer_public_key'] = $account->publicKey->binaryData;
     $transaction = static::createTransaction($symbolService, $arrgs, $isEmbedded);
     $symbolService->setFee($transaction, $cosignatureCount);
-    //$signedTransaction = $symbolService->signTransaction($transaction, $privateKey);
-
-    /* if(isset($arrgs['cosignature'])){
-      $aggregateTransaction = TransactionFactory::deserialize($transaction->serialize());
-      $hash = $symbolService->facade->hashTransaction($transaction);
-
-      foreach($arrgs['cosignature'] as $cosignature){
-        $keyPair = new KeyPair(new PrivateKey(sanitize_text_field($cosignature['private_key'])));
-        $cosig = new Cosignature(
-          signerPublicKey: new PublicKey($keyPair->publicKey()->binaryData),
-          signature: new Signature($keyPair->sign($hash->binaryData)->binaryData)
-        );
-        array_push($aggregateTransaction->cosignatures, $cosig);
-      }
-      $payload = $symbolService->getPayload($aggregateTransaction);
-      return $symbolService->accounceTransaction($payload);
-    } */
     return [
       'payload' => strtoupper(bin2hex($transaction->serialize())),
     ];
-    //$symbolService->accounceTransaction($signedTransaction);
   }
 
   abstract public function getName();

@@ -46,7 +46,7 @@ class VotingKeyLinkTransaction extends BaseTransaction {
     $start_epoch = intval($arrgs['start_epoch']);
     $end_epoch = intval($arrgs['end_epoch']);
     $transaction->linkedPublicKey = new VotingPublicKey($linked_public_key);
-    $transaction->linkAction = new LinkAction(sanitize_text_field($arrgs['action']) == 'link' ? 1 : 0);
+    $transaction->linkAction = new LinkAction(sanitize_text_field($arrgs['link_action']) == 'link' ? 1 : 0);
     $transaction->startEpoch = new FinalizationEpoch($start_epoch);
     $transaction->endEpoch = new FinalizationEpoch($end_epoch);
 

@@ -52,10 +52,9 @@ class SymbolService{
     $this->deadLineSeconds = $deadLineSeconds;
   }
 
-  public function createTransactionHeader(Transaction &$transaction, $arrgs){
-    //$account = $this->facade->createAccount(new PrivateKey($arrgs['private_key']));
-    if($arrgs['signer_public_key'] != 'self') {
-      $transaction->signerPublicKey = new ModelsPublicKey($arrgs['signer_public_key']);//$account->publicKey;
+  public function createTransactionHeader(Transaction &$transaction, $arrgs, $isEmbedded = false){
+    if($isEmbedded) {
+      $transaction->signerPublicKey = new ModelsPublicKey($arrgs['signer_public_key']);
     }
     $transaction->deadline = new Timestamp($this->facade->now()->addSeconds($this->deadLineSeconds)->timestamp);
     $transaction->network = new NetworkType($this->networkType == 'testnet' ? NetworkType::TESTNET : NetworkType::MAINNET);

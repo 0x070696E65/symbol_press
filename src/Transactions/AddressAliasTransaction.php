@@ -3,18 +3,23 @@
 namespace SymbolPress\Transactions;
 
 use SymbolPress\SymbolService;
-use SymbolSdk\Symbol\Models\VrfKeyLinkTransactionV1;
-use SymbolSdk\Symbol\Models\EmbeddedVrfKeyLinkTransactionV1;
+use SymbolSdk\Symbol\Models\Address;
+use SymbolSdk\Symbol\Models\AddressAliasTransactionV1;
+use SymbolSdk\Symbol\Models\EmbeddedAddressAliasTransactionV1;
 use SymbolSdk\Symbol\Models\NetworkType;
 use SymbolSdk\Symbol\Models\PublicKey;
-use SymbolSdk\Symbol\Models\LinkAction;
+use SymbolSdk\Symbol\Models\AliasAction;
+use SymbolSdk\Symbol\Models\NamespaceId;
 
-class VrfKeyLinkTransaction extends BaseTransaction {
+class AddressAliasTransaction extends BaseTransaction {
   private const FIELDS = [
-    'linked_public_key' => [
+    'namespace_id' => [
       'type' => 'text'
     ],
-    'link_action' => [
+    'address' => [
+      'type' => 'text'
+    ],
+    'alias_action' => [
       'type' => 'radio',
       'options' => ['link', 'unlink']
     ]
@@ -32,17 +37,19 @@ class VrfKeyLinkTransaction extends BaseTransaction {
 
   public static function createTransaction(SymbolService $symbolService, array $arrgs, bool $isEmbedded){
     if(!$isEmbedded){
-      $transaction = new VrfKeyLinkTransactionV1();
+      $transaction = new AddressAliasTransactionV1();
       $symbolService->createTransactionHeader($transaction, $arrgs);
     } else {
-      $transaction = new EmbeddedVrfKeyLinkTransactionV1(
+      $transaction = new EmbeddedAddressAliasTransactionV1(
         signerPublicKey: new PublicKey($arrgs['signer_public_key']),
         network: new NetworkType($symbolService->facade->network->identifier)
       );
     }
-    $linked_public_key = sanitize_text_field($arrgs['linked_public_key']);
-    $transaction->linkedPublicKey = new PublicKey($linked_public_key);
-    $transaction->linkAction = new LinkAction(sanitize_text_field($arrgs['link_action']) == 'link' ? 1 : 0);
+    $namespace_id = sanitize_text_field($arrgs['namespace_id']);
+    $address = sanitize_text_field($arrgs['address']);
+    $transaction->namespaceId = new NamespaceId($namespace_id);
+    $transaction->address = new Address($address);
+    $transaction->aliasAction = new AliasAction(sanitize_text_field($arrgs['alias_action']) == 'link' ? 1 : 0);
 
     return $transaction;
   }

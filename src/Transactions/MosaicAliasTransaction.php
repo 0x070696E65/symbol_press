@@ -3,18 +3,23 @@
 namespace SymbolPress\Transactions;
 
 use SymbolPress\SymbolService;
-use SymbolSdk\Symbol\Models\VrfKeyLinkTransactionV1;
-use SymbolSdk\Symbol\Models\EmbeddedVrfKeyLinkTransactionV1;
+use SymbolSdk\Symbol\Models\MosaicId;
+use SymbolSdk\Symbol\Models\MosaicAliasTransactionV1;
+use SymbolSdk\Symbol\Models\EmbeddedMosaicAliasTransactionV1;
 use SymbolSdk\Symbol\Models\NetworkType;
 use SymbolSdk\Symbol\Models\PublicKey;
-use SymbolSdk\Symbol\Models\LinkAction;
+use SymbolSdk\Symbol\Models\AliasAction;
+use SymbolSdk\Symbol\Models\NamespaceId;
 
-class VrfKeyLinkTransaction extends BaseTransaction {
+class MosaicAliasTransaction extends BaseTransaction {
   private const FIELDS = [
-    'linked_public_key' => [
+    'namespace_id' => [
       'type' => 'text'
     ],
-    'link_action' => [
+    'mosaic_id' => [
+      'type' => 'text'
+    ],
+    'alias_action' => [
       'type' => 'radio',
       'options' => ['link', 'unlink']
     ]
@@ -32,17 +37,19 @@ class VrfKeyLinkTransaction extends BaseTransaction {
 
   public static function createTransaction(SymbolService $symbolService, array $arrgs, bool $isEmbedded){
     if(!$isEmbedded){
-      $transaction = new VrfKeyLinkTransactionV1();
+      $transaction = new MosaicAliasTransactionV1();
       $symbolService->createTransactionHeader($transaction, $arrgs);
     } else {
-      $transaction = new EmbeddedVrfKeyLinkTransactionV1(
+      $transaction = new EmbeddedMosaicAliasTransactionV1(
         signerPublicKey: new PublicKey($arrgs['signer_public_key']),
         network: new NetworkType($symbolService->facade->network->identifier)
       );
     }
-    $linked_public_key = sanitize_text_field($arrgs['linked_public_key']);
-    $transaction->linkedPublicKey = new PublicKey($linked_public_key);
-    $transaction->linkAction = new LinkAction(sanitize_text_field($arrgs['link_action']) == 'link' ? 1 : 0);
+    $namespace_id = sanitize_text_field($arrgs['namespace_id']);
+    $mosaic_id = sanitize_text_field($arrgs['mosaic_id']);
+    $transaction->namespaceId = new NamespaceId($namespace_id);
+    $transaction->mosaicId = new MosaicId($mosaic_id);
+    $transaction->aliasAction = new AliasAction(sanitize_text_field($arrgs['alias_action']) == 'link' ? 1 : 0);
 
     return $transaction;
   }

@@ -47,8 +47,8 @@ class ShortcodeHandler {
     $output .= '<input type="hidden" id="inner-transaciton-' . $id_suffix . '" name="inner-transaciton-id" value="' . esc_attr($atts['id']) . '">';
     $output .= '<input type="hidden" id="is-inner-' . $id_suffix . '" name="is-inner" value="' . esc_attr($atts['is_inner']) . '">';
     $output .= '<button id="' . $button_id . '">コンテンツを読み込む</button>';
-    if($atts['is_inner'] == 'false') $output .= '<div id="transactions-' . $id_suffix . '"></div>';
     $output .= '</form>' . "\n";
+    if($atts['is_inner'] == 'false') $output .= '<div id="transactions-' . $id_suffix . '"></div>';
 
     return $output;
   }

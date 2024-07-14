@@ -1,5 +1,6 @@
 <?php
 namespace SymbolPress;
+use SymbolPress\Utils;
 ?>
 <?php
 $form_id_suffix = bin2hex(random_bytes(2));
@@ -33,6 +34,14 @@ if(esc_attr($fields[0]['id']) == 'transaction_type' && strpos(esc_attr($fields[0
             <label for="<?php echo esc_attr($field['id'] . '-' . $option_value . '-' . $form_id_suffix); ?>"><?php echo esc_html($option_label); ?></label>
           <?php endforeach; ?>
         </div>
+      <?php elseif ($field['type'] === 'check') : ?>
+        <p><?php echo esc_attr(Utils::snakeToPascal($field['id'])) ?></p>
+        <?php foreach ($field['options'] as $option) : ?>
+          <div class="custom-radio-wrapper">
+            <input type="checkbox" id="<?php echo esc_attr($field['id'] . '-' . Utils::pascalToSnake($option) . '-' . $form_id_suffix) ?>" name="<?php echo esc_attr($field['id'] . '-' . Utils::pascalToSnake($option)) ?>" />
+            <label for="scales"><?php echo $option ?></label>
+          </div>
+        <?php endforeach; ?>
       <?php elseif (is_array($field['type'])) : ?>
         <div class='array_field'>
           <?php foreach ($field['value'] as $x) {
@@ -52,7 +61,7 @@ if(esc_attr($fields[0]['id']) == 'transaction_type' && strpos(esc_attr($fields[0
             ?>
           <?php endforeach; ?>
           <?php if(count($field['value']) == 0):?>
-          <p><?php echo esc_attr($field['id']) ?></p>
+          <p><?php echo Utils::snakeToPascal(esc_attr($field['id'])) ?></p>
           <button id="add-field-<?php echo $field['id'] . '-' . substr($arrays, 0, -1) . '-' . $array_id_suffix; ?>">フォームを追加</button>
           <?php endif; ?>
           <div id="<?php echo $field['id'] . '-' . $array_id_suffix; ?>"></div>
@@ -92,4 +101,5 @@ if(esc_attr($fields[0]['id']) == 'transaction_type' && strpos(esc_attr($fields[0
     <button class="remove-transaction-<?php echo $form_id_suffix?>">削除</button>
     <?php endif; ?>
 </form>
+</div>
 </div>
