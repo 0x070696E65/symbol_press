@@ -57,11 +57,13 @@ class TransferTransaction extends BaseTransaction {
     $message = sanitize_text_field($arrgs['message']);
 
     $mosaics = [];
-    foreach($arrgs['mosaic'] as $mosaic) {
-      array_push($mosaics, new UnresolvedMosaic(
-        mosaicId: new UnresolvedMosaicId('0x' . sanitize_text_field($mosaic['mosaic_id'])),
-        amount: new Amount(intval($mosaic['mosaic_amount']))
-      ));
+    if(isset($arrgs['mosaic'])){
+      foreach($arrgs['mosaic'] as $mosaic) {
+        array_push($mosaics, new UnresolvedMosaic(
+          mosaicId: new UnresolvedMosaicId('0x' . sanitize_text_field($mosaic['mosaic_id'])),
+          amount: new Amount(intval($mosaic['mosaic_amount']))
+        ));
+      }
     }
 
     $transaction->recipientAddress = new UnresolvedAddress($recipientAddress);

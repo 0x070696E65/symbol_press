@@ -56,12 +56,16 @@ class MultisigAccountModificationTransaction extends BaseTransaction {
     $min_removal_delta = intval($arrgs['min_removal_delta']);
     $min_approval_delta = intval($arrgs['min_approval_delta']);
     $address_addtions = [];
-    foreach($arrgs['address_additions'] as $address_addtion) {
-      array_push($address_addtions, new UnresolvedAddress(sanitize_text_field($address_addtion)));
+    if(isset($arrgs['address_additions'])){
+      foreach($arrgs['address_additions'] as $address_addtion) {
+        array_push($address_addtions, new UnresolvedAddress(sanitize_text_field($address_addtion['address'])));
+      }
     }
     $address_deletions = [];
-    foreach($arrgs['address_deletions'] as $address_deletion) {
-      array_push($address_deletions, new UnresolvedAddress(sanitize_text_field($address_deletion)));
+    if(isset($arrgs['address_deletions'])){
+      foreach($arrgs['address_deletions'] as $address_deletion) {
+        array_push($address_deletions, new UnresolvedAddress(sanitize_text_field($address_deletion['address'])));
+      }
     }
 
     $transaction->minRemovalDelta = $min_removal_delta;

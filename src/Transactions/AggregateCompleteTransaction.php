@@ -8,7 +8,15 @@ use SymbolSdk\Symbol\Models\AggregateCompleteTransactionV2;
 use SymbolPress\Utils;
 
 class AggregateCompleteTransaction extends BaseTransaction {
-  private const FIELDS = [];
+  private const FIELDS = [
+/*     'cosignature' => [
+      'type' => [
+        'private_key' => [
+          'type' => 'text'
+        ],
+      ]
+    ], */
+  ];
 
   public function __construct($atts)
   {
@@ -43,15 +51,12 @@ class AggregateCompleteTransaction extends BaseTransaction {
 
   public static function drawForm($atts, $innerTransactions = null){
     $atts = shortcode_atts(array(
+      'signer_public_key' => '',
       'has_add_button' => 'true'
     ), $atts);
     if ($innerTransactions) {
       $innerTransactions = preg_replace_callback('/\[(\w+_transaction)(.*?)\]/', function ($matches) {
-        if (strpos($matches[2], 'hoge=') === false) {
-          return '[' . $matches[1] . $matches[2] . ' is_inner="true"]';
-        } else {
-          return $matches[0];
-        }
+        return '[' . $matches[1] . $matches[2] . ' is_inner="true" is_short_code="true"]';
       }, $innerTransactions);
     }
     $innerTransactions = do_shortcode($innerTransactions);

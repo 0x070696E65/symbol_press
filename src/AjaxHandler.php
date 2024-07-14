@@ -2,6 +2,7 @@
 
 namespace SymbolPress;
 use SymbolPress\Utils;
+use Exception;
 
 class AjaxHandler{
   public static function generate_mosaic_id_ajax_handler() {
@@ -34,15 +35,23 @@ class AjaxHandler{
 
   public static function send_tranasction_ajax_handler() {
     $transactionDefinitions = include(plugin_dir_path(__FILE__) . 'Transactions/transaction_definitions.php');
-    $node = 'http://sym-test-01.opening-line.jp:3000';
+    $node = 'https://sym-test-01.opening-line.jp:3001';
     check_ajax_referer('symbol_press_nonce', 'nonce');
     $transactionType = sanitize_text_field($_POST['transaction_type']);
 
     foreach($transactionDefinitions as $transactionName) {
       if($transactionType == Utils::pascalToSnake($transactionName)) {
-        $transactionClass = 'SymbolPress\\Transactions\\' . $transactionName;
-        $result = $transactionClass::excuteTransaction($node, $_POST);
-        self::showResult($result);
+        try {
+          $transactionClass = 'SymbolPress\\Transactions\\' . $transactionName;
+          $tx = $transactionClass::excuteTransaction($node, $_POST);
+          wp_send_json_success(array(
+            'payload' => $tx['payload'],
+            'node' => $node
+            ));
+        } catch (Exception $e) {
+          wp_send_json_error($e->getMessage());
+        }
+        //self::showResult($result);
       }
     }
   }

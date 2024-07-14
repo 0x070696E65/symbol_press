@@ -1,17 +1,18 @@
 <?php
 namespace SymbolPress;
 ?>
+<?php
+$form_id_suffix = bin2hex(random_bytes(2));
+$form_id = 'symbol-press-form-' . $form_id_suffix;
+?>
+<div id="symbol-transaction-<?php echo $form_id_suffix?>">
 <?php if($label != null) :?>
   <div class='transaction-label'>
     <label><?php echo $label ?></label>
   </div>
 <?php endif; ?>
 <?php
-$form_id_suffix = bin2hex(random_bytes(2));
-$form_id = 'symbol-press-form-' . $form_id_suffix;
-?>
-<?php
-if(esc_attr($fields[0]['id']) == 'transaction_type' && strpos(esc_attr($fields[0]['value']), 'aggregate') !== false && $hasAddButtton == 'true'){
+if(esc_attr($fields[0]['id']) == 'transaction_type' && strpos(esc_attr($fields[0]['value']), 'aggregate') !== false && $hasAddButton == 'true'){
   echo do_shortcode('[load_content_button id="' . $form_id_suffix . '" is_inner="true"]');
 };
 ?>
@@ -23,8 +24,12 @@ if(esc_attr($fields[0]['id']) == 'transaction_type' && strpos(esc_attr($fields[0
       <?php elseif ($field['type'] === 'radio') : ?>
         <div class="custom-radio-wrapper">
           <label for="<?php echo esc_attr($field['id'] . '-' . $form_id_suffix); ?>"><?php _e($field['label'], 'symbol-press'); ?></label>
+          <?php 
+            $option_keys = array_keys($field['options']); // オプションのキーを取得
+            $first_option_value = reset($option_keys); // 最初のオプションの値を取得
+          ?>
           <?php foreach ($field['options'] as $option_value => $option_label) : ?>
-            <input type="radio" id="<?php echo esc_attr($field['id'] . '-' . $option_value . '-' . $form_id_suffix); ?>" name="<?php echo esc_attr($field['id']); ?>" value="<?php echo esc_attr($option_value); ?>" <?php checked($field['value'], $option_value); ?>>
+            <input type="radio" id="<?php echo esc_attr($field['id'] . '-' . $option_value . '-' . $form_id_suffix); ?>" name="<?php echo esc_attr($field['id']); ?>" value="<?php echo esc_attr($option_value); ?>" <?php checked($option_value, $first_option_value, true); ?>>
             <label for="<?php echo esc_attr($field['id'] . '-' . $option_value . '-' . $form_id_suffix); ?>"><?php echo esc_html($option_label); ?></label>
           <?php endforeach; ?>
         </div>
@@ -60,7 +65,14 @@ if(esc_attr($fields[0]['id']) == 'transaction_type' && strpos(esc_attr($fields[0
       <?php endif; ?>
     <?php endforeach; ?>
     <?php if(esc_attr($fields[0]['id']) == 'transaction_type' && strpos(esc_attr($fields[0]['value']), 'aggregate') !== false) : ?>
-      <label>transactions</label>
+      <?php
+      if(isset($hasAddButton) && $hasAddButton === 'true'){
+        $transactions_label = 'display:block';
+      } else {
+        $transactions_label = 'display:none';
+      }
+      ?>
+      <label style="<?php echo $transactions_label ?>">transactions</label>
       <div id="<?php echo 'transactions-' . $form_id_suffix; ?>">
       <?php if($innerTransactions) :?>
         <?php echo $innerTransactions ?>
@@ -70,11 +82,14 @@ if(esc_attr($fields[0]['id']) == 'transaction_type' && strpos(esc_attr($fields[0
     <?php if($isInner == 'false') : ?>
     <div id="symbol-press-result-wrapper-<?php echo esc_attr($form_id_suffix); ?>">
       <div id="symbol-press-result-<?php echo esc_attr($form_id_suffix); ?>"></div>
+      <div id="qrcode-<?php echo esc_attr($form_id_suffix); ?>"></div>
       <div id="explorer-link-<?php echo esc_attr($form_id_suffix); ?>"></div>
     </div>
     <div class="wp-block-button" style="text-align: center;">
       <button type="submit" class="wp-block-button__link has-text-align-center wp-element-button" id="send-button-<?php echo esc_attr($form_id_suffix); ?>">Send</button>
     </div>
+    <?php elseif($isShortCode == 'false'): ?>
+    <button class="remove-transaction-<?php echo $form_id_suffix?>">削除</button>
     <?php endif; ?>
-  </div>
 </form>
+</div>

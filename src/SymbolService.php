@@ -5,6 +5,7 @@ use SymbolSdk\CryptoTypes\PrivateKey;
 use SymbolSdk\CryptoTypes\PublicKey;
 use SymbolSdk\Symbol\KeyPair;
 use SymbolSdk\Symbol\Models\NetworkType;
+use SymbolSdk\Symbol\Models\PublicKey as ModelsPublicKey;
 use SymbolSdk\Symbol\Models\Timestamp;
 use SymbolSdk\Symbol\Models\Transaction;
 use SymbolSdk\Facade\SymbolFacade;
@@ -52,8 +53,10 @@ class SymbolService{
   }
 
   public function createTransactionHeader(Transaction &$transaction, $arrgs){
-    $account = $this->facade->createAccount(new PrivateKey($arrgs['private_key']));
-    $transaction->signerPublicKey = $account->publicKey;
+    //$account = $this->facade->createAccount(new PrivateKey($arrgs['private_key']));
+    if($arrgs['signer_public_key'] != 'self') {
+      $transaction->signerPublicKey = new ModelsPublicKey($arrgs['signer_public_key']);//$account->publicKey;
+    }
     $transaction->deadline = new Timestamp($this->facade->now()->addSeconds($this->deadLineSeconds)->timestamp);
     $transaction->network = new NetworkType($this->networkType == 'testnet' ? NetworkType::TESTNET : NetworkType::MAINNET);
   }
@@ -63,6 +66,14 @@ class SymbolService{
     $signature = $this->facade->signTransaction($keyPair, $transaction);
     return [
       "payload" => $this->facade->attachSignature($transaction, $signature),
+      "hash" => strtoupper(bin2hex($this->facade->hashTransaction($transaction)->binaryData))
+    ];
+  }
+
+  public function getPayload(Transaction &$transaction){
+    $hexPayload = strtoupper(bin2hex($transaction->serialize()));
+    return [
+      "payload" => ['payload' => $hexPayload],
       "hash" => strtoupper(bin2hex($this->facade->hashTransaction($transaction)->binaryData))
     ];
   }

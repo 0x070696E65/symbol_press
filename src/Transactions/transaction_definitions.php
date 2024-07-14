@@ -4,4 +4,5 @@ return [
   'MosaicDefinitionTransaction',
   'MosaicSupplyChangeTransaction',
   'AggregateCompleteTransaction',
+  'MultisigAccountModificationTransaction',
 ];

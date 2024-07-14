@@ -13,6 +13,8 @@ jQuery(document).ready(function ($) {
       shortcode: shortcode,
     }
 
+    console.log(formData)
+
     $.ajax({
       url: form_draw.ajax_url,
       type: 'POST',
@@ -28,5 +30,15 @@ jQuery(document).ready(function ($) {
         console.error('AJAX error:', error)
       },
     })
+  })
+
+  $(document).on('click', '[class^="remove-transaction-"]', function (e) {
+    e.preventDefault()
+
+    var buttonClass = $(this).attr('class') // クリックされたボタンのクラスを取得
+    var suffix = buttonClass.replace('remove-transaction-', '') // クラスからsuffixを取得
+
+    // suffixと一致するdivを選択し削除
+    $('#symbol-transaction-' + suffix).remove()
   })
 })

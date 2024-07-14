@@ -42,6 +42,8 @@ function symbol_press_enqueue_scripts() {
 
   wp_enqueue_script('add-array-form-script', plugin_dir_url(__FILE__) . 'public/js/add-array-form.js', array('jquery'), null, true);
   wp_localize_script('add-array-form-script', 'add_array_form', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('add_array_form_nonce')));
+
+  wp_enqueue_script('jquery-qrcode', plugins_url('public/js/jquery.qrcode.js', __FILE__), array('jquery'), null, true);
 }
 
 add_action('wp_enqueue_scripts', 'symbol_press_enqueue_scripts');
