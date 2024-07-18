@@ -32,8 +32,8 @@ jQuery(document).ready(function ($) {
     e.preventDefault()
 
     var buttonClass = $(this).attr('class') // クリックされたボタンのクラスを取得
-    var suffix = buttonClass.replace('remove-field-', '') // クラスからsuffixを取得
-
+    var buttonClassArray = buttonClass.split(' ')
+    var suffix = buttonClassArray[0].replace('remove-field-', '') // クラスからsuffixを取得
     // suffixと一致するdivを選択し削除
     $('#field-' + suffix).remove()
   })

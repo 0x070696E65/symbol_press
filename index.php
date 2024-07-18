@@ -8,6 +8,28 @@
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
+global $wpdb;
+
+register_activation_hook(__FILE__, 'symbol_press_activate');
+
+function symbol_press_activate() {
+  global $wpdb;
+  $table_name = $wpdb->prefix . 'symbol_press_table';
+
+  $charset_collate = $wpdb->get_charset_collate();
+
+  $sql = "CREATE TABLE $table_name (
+      id mediumint(9) NOT NULL AUTO_INCREMENT,
+      node text NOT NULL,
+      fee_multi_plier tinyint NOT NULL,
+      deadline_seconds smallint NOT NULL,
+      PRIMARY KEY  (id)
+  ) $charset_collate;";
+
+  require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+  dbDelta($sql);
+}
+
 // Composerのオートローダーを読み込み
 require_once __DIR__ . '/vendor/autoload.php';
 

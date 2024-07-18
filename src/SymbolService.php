@@ -1,6 +1,9 @@
 <?php
 namespace SymbolPress;
 
+include_once(ABSPATH . 'wp-content/plugins/symbol-transactions/admin/admin-page.php');
+
+use Error;
 use SymbolSdk\CryptoTypes\PrivateKey;
 use SymbolSdk\CryptoTypes\PublicKey;
 use SymbolSdk\Symbol\KeyPair;
@@ -26,20 +29,25 @@ class SymbolService{
   private Client $client;
   private string $networkType;
   public SymbolFacade $facade;
+  public string $node;
   private int $feeMultiplier;
   private int $deadLineSeconds;
   private string $exploer;
 
-  public function __construct(string $node, int $feeMultiplier = 100, int $deadLineSeconds = 3600)
+  public function __construct()
   {
+    $data = get_my_plugin_data();
+    if (!$data) throw new Error('data is not set, please set datas on admin page');
+
     $config = new Configuration();
-    $config->setHost($node);
+    $this->node = esc_html($data->node);
+    $config->setHost($this->node);
     $this->client = new Client();
     $this->transactionRoutesApi = new TransactionRoutesApi($this->client, $config);
-    $nodeHealth = self::getRequest($node . "/node/health");
+    $nodeHealth = self::getRequest($this->node . "/node/health");
     if($nodeHealth['status']['apiNode'] != "up" || $nodeHealth['status']['db'] != "up" )
       throw new Exception('node is not good health');
-    $nodeInfo = $this->getRequest($node . "/node/info");
+    $nodeInfo = $this->getRequest($this->node . "/node/info");
     if($nodeInfo['networkIdentifier'] == 152) {
       $this->networkType = 'testnet';
       $this->exploer = self::TEST_NET_EXPLORER;
@@ -48,8 +56,8 @@ class SymbolService{
       $this->exploer = self::MAIN_NET_EXPLORER;
     }
     $this->facade = new SymbolFacade($this->networkType);
-    $this->feeMultiplier = $feeMultiplier;
-    $this->deadLineSeconds = $deadLineSeconds;
+    $this->feeMultiplier = esc_html($data->fee_multi_plier);
+    $this->deadLineSeconds = esc_html($data->deadline_seconds);
   }
 
   public function createTransactionHeader(Transaction &$transaction, $arrgs, $isEmbedded = false){
@@ -92,7 +100,7 @@ class SymbolService{
         throw new Exception('Request failed with status code: ' . $response->getStatusCode());
       }
     } catch (Exception $e) {
-      echo 'Error: ' . $e->getMessage();
+      throw new Exception($e->getMessage());
     }
   }
 

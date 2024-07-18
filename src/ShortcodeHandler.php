@@ -1,30 +1,10 @@
 <?php
 namespace SymbolPress;
-
-use SymbolPress\Transactions;
 use SymbolPress\Utils;
 
 $transactionDefinitions = include(plugin_dir_path(__FILE__) . 'Transactions/transaction_definitions.php');
 
 class ShortcodeHandler {
-  public static function aggregateCompleteTransaction($atts, $innerTransactions = null){
-    $atts = shortcode_atts(array(
-      'has_add_button' => 'true'
-    ), $atts);
-    if ($innerTransactions) {
-      $innerTransactions = preg_replace_callback('/\[(\w+_transaction)(.*?)\]/', function ($matches) {
-        if (strpos($matches[2], 'hoge=') === false) {
-          return '[' . $matches[1] . $matches[2] . ' is_inner="true"]';
-        } else {
-          return $matches[0];
-        }
-      }, $innerTransactions);
-    }
-    $innerTransactions = do_shortcode($innerTransactions);
-    $tx = new Transactions\AggregateCompleteTransaction($atts);
-    return $tx->drawForm($innerTransactions, $atts['has_add_button']);
-  }
-
   public static function button_shortcode($atts) {
     $atts = shortcode_atts(array(
       'id' => '',

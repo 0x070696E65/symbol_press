@@ -2,14 +2,17 @@
 
 namespace SymbolPress\Transactions;
 
+use Error;
 use SymbolPress\SymbolService;
 use SymbolPress\Utils;
 
 abstract class BaseTransaction {
   public array $fields;
   public string $isInner;
-  public ?string $label = '';
-  public string $is_short_code = 'false';
+  public ?string $label;
+  public string $is_short_code;
+  public string $button_text;
+  public string $button_color;
   public function __construct(&$atts, array $fields)
   {
     $base_atts = array(
@@ -17,6 +20,8 @@ abstract class BaseTransaction {
       'signer_public_key' => '',
       'is_inner' => 'false',
       'is_short_code' => 'false',
+      'button_text' => 'Send',
+      'button_color' => '',
       'transaction_type' => Utils::pascalToSnake($this->getName()),
       'label' => ''
     );
@@ -26,6 +31,9 @@ abstract class BaseTransaction {
     }
     $atts2 = shortcode_atts($base_atts, $atts);
     $this->is_short_code = $atts2['is_short_code'];
+    $this->button_text = $atts2['button_text'];
+    $this->button_color = $atts2['button_color'];
+
     foreach($fields as $key => $value) {
       if(is_array($value['type'])) {
         $atts2[$key] = [];
@@ -115,19 +123,22 @@ abstract class BaseTransaction {
       'innerTransactions' => $innerTransactions,
       'hasAddButton' => $hasAddButton,
       'isShortCode' => $this->is_short_code,
-      'label' => $this->label
+      'label' => $this->label,
+      'buttonText' => $this->button_text,
+      'buttonColor' => $this->button_color
     ]);
 
     include plugin_dir_path(__FILE__) . '../form-template.php';
     return ob_get_clean();
   }
 
-  public static function excuteTransaction($node, array $arrgs, bool $isEmbedded = false, $cosignatureCount = 0){
-    $symbolService = new SymbolService($node);
+  public static function excuteTransaction(array $arrgs, bool $isEmbedded = false, $cosignatureCount = 0){
+    $symbolService = new SymbolService();
     $transaction = static::createTransaction($symbolService, $arrgs, $isEmbedded);
     $symbolService->setFee($transaction, $cosignatureCount);
     return [
       'payload' => strtoupper(bin2hex($transaction->serialize())),
+      'node' => $symbolService->node
     ];
   }
 

@@ -61,8 +61,8 @@ if(esc_attr($fields[0]['id']) == 'transaction_type' && strpos(esc_attr($fields[0
             ?>
           <?php endforeach; ?>
           <?php if(count($field['value']) == 0):?>
-          <p><?php echo Utils::snakeToPascal(esc_attr($field['id'])) ?></p>
-          <button id="add-field-<?php echo $field['id'] . '-' . substr($arrays, 0, -1) . '-' . $array_id_suffix; ?>">フォームを追加</button>
+          <label><?php echo Utils::snakeToPascal(esc_attr($field['id'])) ?></label>
+          <p><button class="wp-block-button__link has-text-align-center wp-element-button" id="add-field-<?php echo $field['id'] . '-' . substr($arrays, 0, -1) . '-' . $array_id_suffix; ?>">Add</button></p>
           <?php endif; ?>
           <div id="<?php echo $field['id'] . '-' . $array_id_suffix; ?>"></div>
         </div>
@@ -95,10 +95,11 @@ if(esc_attr($fields[0]['id']) == 'transaction_type' && strpos(esc_attr($fields[0
       <div id="explorer-link-<?php echo esc_attr($form_id_suffix); ?>"></div>
     </div>
     <div class="wp-block-button" style="text-align: center;">
-      <button type="submit" class="wp-block-button__link has-text-align-center wp-element-button" id="send-button-<?php echo esc_attr($form_id_suffix); ?>">Send</button>
+    <?php $buttonStyle = $buttonColor == '' ? '' : ' style="background: ' . $buttonColor. '"' ?>
+      <button type="submit" class="wp-block-button__link has-text-align-center wp-element-button" id="send-button-<?php echo esc_attr($form_id_suffix); ?>"<?php echo $buttonStyle?>><?php echo ($buttonText)?></button>
     </div>
     <?php elseif($isShortCode == 'false'): ?>
-    <button class="remove-transaction-<?php echo $form_id_suffix?>">削除</button>
+    <p><button class="remove-transaction-<?php echo $form_id_suffix?> wp-block-button__link has-text-align-center wp-element-button">Delete</button></p>
     <?php endif; ?>
 </form>
 </div>

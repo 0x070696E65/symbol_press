@@ -9,9 +9,8 @@ class AjaxHandler{
     // セキュリティチェック
     check_ajax_referer('generate_mosaic_id_nonce', 'nonce');
 
-    $node = 'http://sym-test-01.opening-line.jp:3000';
     $signerPublicKey = sanitize_text_field($_POST['signer_public_key']);
-    $symbolService = new SymbolService($node);
+    $symbolService = new SymbolService();
     $mosaicId = $symbolService->generateMosaicId($signerPublicKey);
 
     wp_send_json_success(array(
@@ -22,20 +21,8 @@ class AjaxHandler{
     wp_die(); // 必ず終了する
   }
 
-  private static function showResult($result){
-    if($result['isSuccess'] == true) {      
-      wp_send_json_success(array(
-        'message' => 'Transaction completed successfully.',
-        'explorer_link' => $result['message']
-      ));
-    } else {
-      wp_send_json_error($result['message']);
-    }
-  }
-
   public static function send_tranasction_ajax_handler() {
     $transactionDefinitions = include(plugin_dir_path(__FILE__) . 'Transactions/transaction_definitions.php');
-    $node = 'https://sym-test-01.opening-line.jp:3001';
     check_ajax_referer('symbol_press_nonce', 'nonce');
     $transactionType = sanitize_text_field($_POST['transaction_type']);
 
@@ -43,15 +30,14 @@ class AjaxHandler{
       if($transactionType == Utils::pascalToSnake($transactionName)) {
         try {
           $transactionClass = 'SymbolPress\\Transactions\\' . $transactionName;
-          $tx = $transactionClass::excuteTransaction($node, $_POST);
+          $tx = $transactionClass::excuteTransaction($_POST);
           wp_send_json_success(array(
             'payload' => $tx['payload'],
-            'node' => $node
+            'node' => $tx['node']
             ));
         } catch (Exception $e) {
           wp_send_json_error($e->getMessage());
         }
-        //self::showResult($result);
       }
     }
   }
@@ -104,7 +90,7 @@ class AjaxHandler{
       $output .= '<label for="' . $id . '-' . $keyValue[0] . '-' . $child_suffix . '">' . Utils::snakeToPascal($keyValue[0]) . '</label>';
       $output .= '</div>';
     }
-    $output .= '<button class="remove-field-' . $child_suffix . '">削除</button>';
+    $output .= '<p><button class="remove-field-' . $child_suffix . ' wp-block-button__link has-text-align-center wp-element-button">Delete</button></p>';
     $output .= '</div>';
 
     wp_send_json_success(array(
