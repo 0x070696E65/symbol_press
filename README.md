@@ -10,6 +10,14 @@ git clone https://github.com/0x070696E65/symbol_press.git
 /wordpress/wp-content/plugins/
 ```
 
+`symbol_press`ディレクトリにて
+
+```sh
+composer install
+```
+
+を実行する。
+
 WordPress 管理画面よりプラグインの有効化
 
 # 初期設定
