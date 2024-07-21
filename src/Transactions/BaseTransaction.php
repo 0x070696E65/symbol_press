@@ -107,7 +107,7 @@ abstract class BaseTransaction {
 
         // options の値を設定
         foreach ($options as $option) {
-          $fieldData['options'][$option] = Utils::snakeToPascal($option);
+          $fieldData['options'][$option] = Utils::snakeToPascal($option);          
         }
       }
       array_push($form_fields, $fieldData);

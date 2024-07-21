@@ -4,7 +4,7 @@
   "type": "wordpress-plugin",
   "require": {
     "symbol-blockchain-community/symbol-rest-client": "^1.0",
-    "symbol-blockchain-community/symbol-sdk": "^1.0"
+    "symbol-blockchain-community/symbol-sdk": "^1.0.4"
   },
   "autoload": {
     "psr-4": {

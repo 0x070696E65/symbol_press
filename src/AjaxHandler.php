@@ -9,9 +9,9 @@ class AjaxHandler{
     // セキュリティチェック
     check_ajax_referer('generate_mosaic_id_nonce', 'nonce');
 
-    $signerPublicKey = sanitize_text_field($_POST['signer_public_key']);
+    $address = sanitize_text_field($_POST['address']);
     $symbolService = new SymbolService();
-    $mosaicId = $symbolService->generateMosaicId($signerPublicKey);
+    $mosaicId = $symbolService->generateMosaicId($address);
 
     wp_send_json_success(array(
       'mosaic_id' => $mosaicId['id'],
@@ -33,7 +33,8 @@ class AjaxHandler{
           $tx = $transactionClass::excuteTransaction($_POST);
           wp_send_json_success(array(
             'payload' => $tx['payload'],
-            'node' => $tx['node']
+            'node' => $tx['node'],
+            'sign_mode' => $_POST['sign_mode']
             ));
         } catch (Exception $e) {
           wp_send_json_error($e->getMessage());

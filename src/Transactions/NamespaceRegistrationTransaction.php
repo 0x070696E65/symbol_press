@@ -3,6 +3,7 @@
 namespace SymbolPress\Transactions;
 
 use SymbolPress\SymbolService;
+use SymbolSdk\Symbol\IdGenerator;
 use SymbolSdk\Symbol\Models\NamespaceRegistrationTransactionV1;
 use SymbolSdk\Symbol\Models\EmbeddedNamespaceRegistrationTransactionV1;
 use SymbolSdk\Symbol\Models\NetworkType;
@@ -13,18 +14,14 @@ use SymbolSdk\Symbol\Models\NamespaceRegistrationType;
 
 class NamespaceRegistrationTransaction extends BaseTransaction {
   private const FIELDS = [
+    'name' => [
+      'type' => 'text'
+    ],
     'duration' => [
       'type' => 'number'
     ],
     'parent_id' => [
       'type' => 'text'
-    ],
-    'id' => [
-      'type' => 'text'
-    ],
-    'registration_type' => [
-      'type' => 'radio',
-      'options' => ['root', 'child']
     ]
   ];
 
@@ -50,12 +47,15 @@ class NamespaceRegistrationTransaction extends BaseTransaction {
     }
 
     $parent_id = sanitize_text_field($arrgs['parent_id']);
-    $id = sanitize_text_field($arrgs['id']);
+    $parent_id = $parent_id == 'blank' ? 0 : '0x' . $parent_id;
+    $name = sanitize_text_field($arrgs['name']);
     $duration = intval($arrgs['duration']);
-    $transaction->registrationType = new NamespaceRegistrationType(sanitize_text_field($arrgs['registration_type']) == 'root' ? 0 : 1);
+    $registrationType = $parent_id == 0 ? 0 : 1;
+    $transaction->registrationType = new NamespaceRegistrationType($registrationType);
 
     $transaction->parentId = new NamespaceId($parent_id);
-    $transaction->id = new NamespaceId($id);
+    $transaction->id = new NamespaceId(IdGenerator::generateNamespaceId($name, $transaction->parentId->value));
+    $transaction->name = $name;
     $transaction->duration = new BlockDuration($duration);
 
     return $transaction;

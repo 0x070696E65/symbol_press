@@ -54,11 +54,11 @@ class AccountMosaicRestrictionTransaction extends BaseTransaction {
     }
 
     $flags = 0;
-    if(sanitize_text_field($arrgs['account_restriction_flags-address']) == 'on') $flags += 1;
-    if(sanitize_text_field($arrgs['account_restriction_flags-mosaic_id']) == 'on') $flags += 2;
-    if(sanitize_text_field($arrgs['account_restriction_flags-transaction_type']) == 'on') $flags += 4;
-    if(sanitize_text_field($arrgs['account_restriction_flags-out_going']) == 'on') $flags += 16384;
-    if(sanitize_text_field($arrgs['account_restriction_flags-block']) == 'on') $flags += 32768;
+    if(isset($arrgs['account_restriction_flags-address'])) $flags += 1;
+    if(isset($arrgs['account_restriction_flags-mosaic_id'])) $flags += 2;
+    if(isset($arrgs['account_restriction_flags-transaction_type'])) $flags += 4;
+    if(isset($arrgs['account_restriction_flags-out_going'])) $flags += 16384;
+    if(isset($arrgs['account_restriction_flags-block'])) $flags += 32768;
 
     $restriction_additions = [];
     if(isset($arrgs['restriction_additions'])){

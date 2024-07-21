@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Symbol Transactions
+ * Plugin Name: Symbol Press
  * Description: A WordPress plugin for symbol transactions.
  * Version: 1.0
  * Author: toshi

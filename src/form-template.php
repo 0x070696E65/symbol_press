@@ -20,7 +20,7 @@ if(esc_attr($fields[0]['id']) == 'transaction_type' && strpos(esc_attr($fields[0
 <form id="<?php echo esc_attr($form_id); ?>" method="post" action="">
   <div>
     <?php foreach ($fields as $field) : ?>
-      <?php if (!empty($field['value']) && !is_array($field['type'])) : ?>
+      <?php if ((!empty($field['value']) && !is_array($field['type'])) || $field['type'] == 'hidden') : ?>
         <input type="hidden" id="<?php echo esc_attr($field['id'] . '-' . $form_id_suffix); ?>" name="<?php echo esc_attr($field['id']); ?>" value="<?php echo esc_attr($field['value']); ?>">
       <?php elseif ($field['type'] === 'radio') : ?>
         <div class="custom-radio-wrapper">
@@ -38,7 +38,7 @@ if(esc_attr($fields[0]['id']) == 'transaction_type' && strpos(esc_attr($fields[0
         <p><?php echo esc_attr(Utils::snakeToPascal($field['id'])) ?></p>
         <?php foreach ($field['options'] as $option) : ?>
           <div class="custom-radio-wrapper">
-            <input type="checkbox" id="<?php echo esc_attr($field['id'] . '-' . Utils::pascalToSnake($option) . '-' . $form_id_suffix) ?>" name="<?php echo esc_attr($field['id'] . '-' . Utils::pascalToSnake($option)) ?>" />
+            <input type="checkbox" id="<?php echo esc_attr($field['id'] . '-' . Utils::pascalToSnake($option) . '-' . $form_id_suffix) ?>" name="<?php echo esc_attr($field['id'] . '-' . Utils::pascalToSnake($option)) ?>" value="<?php echo Utils::pascalToSnake($option) ?>" />
             <label for="scales"><?php echo $option ?></label>
           </div>
         <?php endforeach; ?>
@@ -89,9 +89,9 @@ if(esc_attr($fields[0]['id']) == 'transaction_type' && strpos(esc_attr($fields[0
       </div>
     <?php endif; ?>
     <?php if($isInner == 'false') : ?>
-    <div id="symbol-press-result-wrapper-<?php echo esc_attr($form_id_suffix); ?>">
+    <div id="symbol-press-result-wrapper-<?php echo esc_attr($form_id_suffix); ?>" style="text-align: center; margin: 20px;">
       <div id="symbol-press-result-<?php echo esc_attr($form_id_suffix); ?>"></div>
-      <div id="qrcode-<?php echo esc_attr($form_id_suffix); ?>"></div>
+      <div id="qrcode-<?php echo esc_attr($form_id_suffix); ?>" class="qrcode"></div>
       <div id="explorer-link-<?php echo esc_attr($form_id_suffix); ?>"></div>
     </div>
     <div class="wp-block-button" style="text-align: center;">

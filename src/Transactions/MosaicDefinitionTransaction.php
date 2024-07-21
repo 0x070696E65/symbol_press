@@ -14,6 +14,9 @@ use SymbolSdk\Symbol\Models\MosaicNonce;
 
 class MosaicDefinitionTransaction extends BaseTransaction {
   private const FIELDS = [
+    'address' => [
+      'type' => 'text'
+    ],
     'supply_mutable' => [
       'type' => 'radio',
       'options' => ['true', 'false']
@@ -86,6 +89,12 @@ class MosaicDefinitionTransaction extends BaseTransaction {
   }
 
   public static function drawForm($atts){
+    if(isset($atts['address']) && $atts['address'] != '') {
+      $symbolService = new SymbolService();
+      $mosaicId = $symbolService->generateMosaicId($atts['address']);
+      $atts['mosaic_id'] = $mosaicId['id'];
+      $atts['mosaic_nonce'] = $mosaicId['nonce'];
+    }
     $tx = new self($atts);
     return $tx->_drawForm();
   }

@@ -63,8 +63,8 @@ function my_plugin_page() {
     $data = $wpdb->get_row("SELECT * FROM $table_name ORDER BY id LIMIT 1");
 
     $node = isset($data->node) ? $data->node : '';
-    $fee_multi_plier = isset($data->fee_multi_plier) ? $data->fee_multi_plier : '';
-    $deadline_seconds = isset($data->deadline_seconds) ? $data->deadline_seconds : '';
+    $fee_multi_plier = isset($data->fee_multi_plier) ? $data->fee_multi_plier : '100';
+    $deadline_seconds = isset($data->deadline_seconds) ? $data->deadline_seconds : '3600';
 
     ?>
     <div class="wrap">

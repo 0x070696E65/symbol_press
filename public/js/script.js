@@ -5,8 +5,16 @@ jQuery(document).ready(function ($) {
   $('form[id^="symbol-press-form-"]').on('submit', function (e) {
     e.preventDefault()
 
+    var clickedButton = e.originalEvent.submitter
+
+    // ボタンのIDを取得
+    var buttonId = clickedButton.id
+    var buttonIdSuffix = buttonId.split('-').pop()
+
     var formId = $(this).attr('id')
     var formIdSuffix = formId.split('-').pop()
+
+    if (buttonIdSuffix != formIdSuffix) return
 
     var signModeValue = 'SSS'
     if ($(`#sign_mode-aLice-${formIdSuffix}`).is(':checked')) signModeValue = 'aLice'
@@ -30,10 +38,21 @@ jQuery(document).ready(function ($) {
       .each(function () {
         formData[this.name] = $(this).val()
       })
+    // 選択されているラジオボタンの値を取得
+    $(this)
+      .find('input[type="checkbox"]:checked')
+      .not($(this).find('form input, form textarea, form select,.array_field input')) // ネストされたフォームの入力を除外
+      .each(function () {
+        formData[this.name] = $(this).val()
+      })
     // 外部フォームのデータを収集
     $(this)
       .find('input, textarea, select')
-      .not($(this).find('form input, form textarea, form select, .array_field input, input[type="radio"]')) // ネストされたフォームの入力を除外
+      .not(
+        $(this).find(
+          'form input, form textarea, form select, .array_field input, input[type="radio"], input[type="checkbox"]'
+        )
+      ) // ネストされたフォームの入力を除外
       .each(function () {
         formData[this.name] = $(this).val()
       })
@@ -67,8 +86,11 @@ jQuery(document).ready(function ($) {
         $(this)
           .find('input[type="radio"]:checked')
           .each(function () {
-            console.log(this.name)
-            console.log($(this).val())
+            innerFormData[this.name] = $(this).val()
+          })
+        $(this)
+          .find('input[type="checkbox"]:checked')
+          .each(function () {
             innerFormData[this.name] = $(this).val()
           })
         var arrayValues = $(this)
@@ -95,12 +117,13 @@ jQuery(document).ready(function ($) {
       success: async function (response) {
         if (response.success) {
           try {
-            if (signModeValue == 'SSS') {
+            if (response.data.sign_mode == 'SSS') {
+              console.log(response.data.payload)
               window.SSS.setTransactionByPayload(response.data.payload)
               const signedTx = await window.SSS.requestSign()
               const explorerLink = `<a href='${
                 signedTx.networkType == 152 ? TEST_NET_EXPLORER : MAIN_NET_EXPLORER
-              }/transactions/${signedTx.hash}' target='_blank'>To Explorer</a>`
+              }/transactions/${signedTx.hash}' target='_blank'>Explorer</a>`
 
               const address = window.SSS.activeAddress
               const wsnode = response.data.node.replace(/^https/, 'wss') + '/ws'
@@ -168,7 +191,7 @@ jQuery(document).ready(function ($) {
               )}&method=announce`
               jQuery('#qrcode-' + formIdSuffix).qrcode(url)
               const aliceButton = `<div class="wp-block-button" style="text-align: center;">
-                <button  onclick="window.location.href = '${url}';" class="wp-block-button__link has-text-align-center wp-element-button" id="to_alice">Sign by aLice</button>
+                <button onclick="window.location.href = '${url}';" class="wp-block-button__link has-text-align-center wp-element-button" id="to_alice">Sign by aLice</button>
               </div>`
               $('#symbol-press-result-' + formIdSuffix).html(aliceButton)
               $('#symbol-press-result-' + formIdSuffix + ' .spinner').remove()

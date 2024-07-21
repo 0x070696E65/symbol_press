@@ -108,7 +108,7 @@ class SymbolService{
     try {
       $this->transactionRoutesApi->announceTransaction($signedTransaction['payload']);
       $signedTransactionHash = $signedTransaction["hash"];
-      $explorerLink = "<a href='{$this->exploer}/transactions/{$signedTransactionHash}' target='_blank'>To Explorer</a>";
+      $explorerLink = "<a href='{$this->exploer}/transactions/{$signedTransactionHash}' target='_blank'>Explorer</a>";
       return [
         "isSuccess" => true,
         "message" => $explorerLink
@@ -121,9 +121,8 @@ class SymbolService{
     }
   }
 
-  public function generateMosaicId(string $publicKeyHex){
-    $address = $this->facade->network->publicKeyToAddress(new PublicKey($publicKeyHex));
-    $mid = IdGenerator::generateMosaicId(new UnresolvedAddress($address->binaryData));
+  public function generateMosaicId(string $address){
+    $mid = IdGenerator::generateMosaicId(new UnresolvedAddress($address));
     return [
       "id" => Converter::intToHex($mid['id'], 8, true),
       "nonce" => $mid['nonce']

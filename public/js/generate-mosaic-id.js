@@ -1,13 +1,13 @@
 jQuery(document).ready(function ($) {
   // フォームにイベントリスナーを設定する関数
   function bindFormEvents(form) {
-    // signer_public_keyの入力内容が変更されたときのイベント
-    form.find('input[name="signer_public_key"]').on('input', function () {
+    // addressの入力内容が変更されたときのイベント
+    form.find('input[name="address"]').on('input', function () {
       var transactionType = form.find('input[name="transaction_type"]').val()
-      var signerPublicKey = $(this).val()
+      var address = $(this).val()
 
-      // transactionTypeがmosaic_definitionで、signerPublicKeyが64文字の場合のみ処理を実行
-      if (transactionType === 'mosaic_definition_transaction' && signerPublicKey.length === 64) {
+      // transactionTypeがmosaic_definitionで、addressが64文字の場合のみ処理を実行
+      if (transactionType === 'mosaic_definition_transaction' && address.length === 39) {
         // Ajaxリクエストを送信
         $.ajax({
           type: 'POST',
@@ -15,7 +15,7 @@ jQuery(document).ready(function ($) {
           data: {
             action: 'generate_mosaic_id', // Ajax処理のハンドラー
             nonce: generate_mosaic_id.nonce,
-            signer_public_key: signerPublicKey, // signer_public_keyを送信
+            address: address, // addressを送信
           },
           success: function (response) {
             var mosaicId = response.data.mosaic_id

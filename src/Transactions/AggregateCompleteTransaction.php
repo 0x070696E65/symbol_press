@@ -8,15 +8,7 @@ use SymbolSdk\Symbol\Models\AggregateCompleteTransactionV2;
 use SymbolPress\Utils;
 
 class AggregateCompleteTransaction extends BaseTransaction {
-  private const FIELDS = [
-/*     'cosignature' => [
-      'type' => [
-        'private_key' => [
-          'type' => 'text'
-        ],
-      ]
-    ], */
-  ];
+  private const FIELDS = [];
 
   public function __construct($atts)
   {
@@ -51,7 +43,6 @@ class AggregateCompleteTransaction extends BaseTransaction {
 
   public static function drawForm($atts, $innerTransactions = null){
     $atts = shortcode_atts(array(
-      'signer_public_key' => '',
       'has_add_button' => 'true'
     ), $atts);
     if ($innerTransactions) {
