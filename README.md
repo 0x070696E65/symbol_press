@@ -64,164 +64,183 @@ Symbol の Transaction を WordPress のショートコードでページ等に�
 
 ## TransferTransaction
 
-| 属性名            | 詳細                                                  |
+short code: `[transfer_transaction]`
+| 属性名 | 詳細 |
 | :---------------- | :---------------------------------------------------- |
-| recipient_address | 受信者                                                |
-| message           | 固定メッセージ                                        |
-| mosaic_id-0       | モザイク ID ※末尾の番号を増やすことで複数モザイク送信 |
-| mosaic_amount-0   | モザイク量                                            |
+| recipient_address | 受信者 |
+| message | 固定メッセージ |
+| mosaic_id-0 | モザイク ID ※末尾の番号を増やすことで複数モザイク送信 |
+| mosaic_amount-0 | モザイク量 |
 
 ## MosaicDefinitionTransaction
 
-| 属性名         | 詳細                                               |
+short code: `[mosaic_definition_transaction]`
+| 属性名 | 詳細 |
 | :------------- | :------------------------------------------------- |
-| address        | モザイク作成者アドレス                             |
-| supply_mutable | 増減可能か                                         |
-| transferable   | 転送可能か                                         |
-| restrictable   | 制限可能か                                         |
-| revokable      | リボーカルブルかどうか                             |
-| mosaic_id      | モザイク ID 但しアドレスが設定されている場合は自動 |
-| mosaic_nonce   | ナンス                                             |
-| duration       | 期間                                               |
-| divisibility   | 可分性                                             |
+| address | モザイク作成者アドレス |
+| supply_mutable | 増減可能か |
+| transferable | 転送可能か |
+| restrictable | 制限可能か |
+| revokable | リボーカルブルかどうか |
+| mosaic_id | モザイク ID 但しアドレスが設定されている場合は自動 |
+| mosaic_nonce | ナンス |
+| duration | 期間 |
+| divisibility | 可分性 |
 
 ## MosaicSupplyChangeTransaction
 
-| 属性名    | 詳細                 |
+short code: `[mosaic_supply_change_transaction]`
+| 属性名 | 詳細 |
 | :-------- | :------------------- |
-| mosaic_id | モザイク ID          |
-| action    | increase or decrease |
-| delta     | 増減量               |
+| mosaic_id | モザイク ID |
+| action | increase or decrease |
+| delta | 増減量 |
 
 ## MosaicSupplyRevocationTransaction
 
-| 属性名         | 詳細         |
+short code: `[mosaic_supply_revocation_transaction]`
+| 属性名 | 詳細 |
 | :------------- | :----------- |
 | source_address | 対象アドレス |
-| mosaic_id      | モザイク ID  |
-| amount         | 量           |
+| mosaic_id | モザイク ID |
+| amount | 量 |
 
 ## AggregateCompleteTransaction
 
-| 属性名         | 詳細                                           |
+short code: `[aggregate_complete_transaction]`
+| 属性名 | 詳細 |
 | :------------- | :--------------------------------------------- |
 | has_add_button | インナートランザクション追加ボタンの表示非表示 |
 
 ## MultisigAccountModificationTransaction
 
-| 属性名             | 詳細              |
+short code: `[multisig_account_modification_transaction]`
+| 属性名 | 詳細 |
 | :----------------- | :---------------- |
-| min_removal_delta  | 最小削除数        |
-| min_approval_delta | 最小承認数        |
-| address_additions  | 追加アドレス 配列 |
-| address_deletions  | 削除アドレス 配列 |
+| min_removal_delta | 最小削除数 |
+| min_approval_delta | 最小承認数 |
+| address_additions | 追加アドレス 配列 |
+| address_deletions | 削除アドレス 配列 |
 
 ## AccountMetadataTransaction
 
-| 属性名              | 詳細           |
+short code: `[account_metadata_transaction]`
+| 属性名 | 詳細 |
 | :------------------ | :------------- |
-| target_address      | 対象アドレス   |
+| target_address | 対象アドレス |
 | scoped_metadata_key | メタデータキー |
-| value               | 値             |
+| value | 値 |
 
 ## MosaicMetadataTransaction
 
-| 属性名              | 詳細            |
+short code: `[mosaic_metadata_transaction]`
+| 属性名 | 詳細 |
 | :------------------ | :-------------- |
-| target_address      | 対象アドレス    |
-| target_mosaic_id    | 対象モザイク ID |
-| scoped_metadata_key | メタデータキー  |
-| value               | 値              |
+| target_address | 対象アドレス |
+| target_mosaic_id | 対象モザイク ID |
+| scoped_metadata_key | メタデータキー |
+| value | 値 |
 
 ## NamespaceMetadataTransaction
 
-| 属性名              | 詳細                  |
+short code: `[namespace_metadata_transaction]`
+| 属性名 | 詳細 |
 | :------------------ | :-------------------- |
-| target_address      | 対象アドレス          |
+| target_address | 対象アドレス |
 | target_namespace_id | 対象ネームスペース ID |
-| scoped_metadata_key | メタデータキー        |
-| value               | 値                    |
+| scoped_metadata_key | メタデータキー |
+| value | 値 |
 
 ## NamespaceRegistrationTransaction
 
-| 属性名    | 詳細                                                |
+short code: `[namespace_registration_transaction]`
+| 属性名 | 詳細 |
 | :-------- | :-------------------------------------------------- |
-| name      | ネームスペース名                                    |
-| duration  | 期間                                                |
+| name | ネームスペース名 |
+| duration | 期間 |
 | parent_id | ルートの場合は'blank'を与えるとフォーム非表示になる |
 
 ## AddressAliasTransaction
 
-| 属性名       | 詳細              |
+short code: `[address_alias_transaction]`
+| 属性名 | 詳細 |
 | :----------- | :---------------- |
 | namespace_id | ネームスペース ID |
-| address      | 対象アドレス      |
-| alias_action | link or unlink    |
+| address | 対象アドレス |
+| alias_action | link or unlink |
 
 ## MosaicAliasTransaction
 
-| 属性名       | 詳細              |
+short code: `[mosaic_alias_transaction]`
+| 属性名 | 詳細 |
 | :----------- | :---------------- |
 | namespace_id | ネームスペース ID |
-| mosaic_id    | 対象モザイク ID   |
-| alias_action | link or unlink    |
+| mosaic_id | 対象モザイク ID |
+| alias_action | link or unlink |
 
 ## HashLockTransaction
 
-| 属性名        | 詳細           |
+short code: `[hash_lock_transaction]`
+| 属性名 | 詳細 |
 | :------------ | :------------- |
-| mosaic_id     | モザイク ID    |
-| mosaic_amount | モザイク量     |
-| duration      | 期間           |
-| hash          | ハッシュタイプ |
+| mosaic_id | モザイク ID |
+| mosaic_amount | モザイク量 |
+| duration | 期間 |
+| hash | ハッシュタイプ |
 
 ## MosaicAddressRestrictionTransaction
 
-| 属性名                     | 詳細         |
+short code: `[mosaic_address_restriction_transaction]`
+| 属性名 | 詳細 |
 | :------------------------- | :----------- |
-| mosaic_id                  | モザイク ID  |
-| restriction_key            | 制限キー     |
-| previous_restriction_value | 旧制限値     |
-| new_restriction_value      | 新制限値     |
-| target_address             | 対象アドレス |
+| mosaic_id | モザイク ID |
+| restriction_key | 制限キー |
+| previous_restriction_value | 旧制限値 |
+| new_restriction_value | 新制限値 |
+| target_address | 対象アドレス |
 
 ## MosaicGlobalRestrictionTransaction
 
-| 属性名                     | 詳細         |
+short code: `[mosaic_global_restriction_transaction]`
+| 属性名 | 詳細 |
 | :------------------------- | :----------- |
-| mosaic_id                  | モザイク ID  |
-| restriction_key            | 制限キー     |
-| previous_restriction_value | 旧制限値     |
-| new_restriction_value      | 新制限値     |
-| target_address             | 対象アドレス |
+| mosaic_id | モザイク ID |
+| restriction_key | 制限キー |
+| previous_restriction_value | 旧制限値 |
+| new_restriction_value | 新制限値 |
+| target_address | 対象アドレス |
 
 ## AccountKeyLinkTransaction
 
-| 属性名            | 詳細           |
+short code: `[account_key_link_transaction]`
+| 属性名 | 詳細 |
 | :---------------- | :------------- |
-| linked_public_key | リンク公開鍵   |
-| link_action       | link or unlink |
+| linked_public_key | リンク公開鍵 |
+| link_action | link or unlink |
 
 ## NodeKeyLinkTransaction
 
-| 属性名            | 詳細           |
+short code: `[node_key_link_transaction]`
+| 属性名 | 詳細 |
 | :---------------- | :------------- |
-| linked_public_key | リンク公開鍵   |
-| link_action       | link or unlink |
+| linked_public_key | リンク公開鍵 |
+| link_action | link or unlink |
 
 ## VotingKeyLinkTransaction
 
-| 属性名            | 詳細           |
+short code: `[voting_key_link_transaction]`
+| 属性名 | 詳細 |
 | :---------------- | :------------- |
-| linked_public_key | リンク公開鍵   |
-| link_action       | link or unlink |
+| linked_public_key | リンク公開鍵 |
+| link_action | link or unlink |
 
 ## VrfKeyLinkTransaction
 
-| 属性名            | 詳細           |
+short code: `[vrf_key_link_transaction]`
+| 属性名 | 詳細 |
 | :---------------- | :------------- |
-| linked_public_key | リンク公開鍵   |
-| link_action       | link or unlink |
+| linked_public_key | リンク公開鍵 |
+| link_action | link or unlink |
 
 ※以下トランザクション属性は準備中、フォームは利用可能
 
