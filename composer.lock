@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2ef47f5499ad6ff590735a0782cade06",
+    "content-hash": "0634b79f6c52233424e7ea9324fed50f",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -534,65 +534,6 @@
                 "source": "https://github.com/ralouphie/getallheaders/tree/develop"
             },
             "time": "2019-03-08T08:55:37+00:00"
-        },
-        {
-            "name": "symbol-blockchain-community/symbol-rest-client",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symbol-blockchain-community/symbol-rest-client-php.git",
-                "reference": "48b2a258fd90b935b4634cb4c9293b18ef7b5849"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symbol-blockchain-community/symbol-rest-client-php/zipball/48b2a258fd90b935b4634cb4c9293b18ef7b5849",
-                "reference": "48b2a258fd90b935b4634cb4c9293b18ef7b5849",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-json": "*",
-                "ext-mbstring": "*",
-                "guzzlehttp/guzzle": "^7.3",
-                "guzzlehttp/psr7": "^1.7 || ^2.0",
-                "php": "^7.4 || ^8.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.5",
-                "phpunit/phpunit": "^8.0 || ^9.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "SymbolRestClient\\": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "unlicense"
-            ],
-            "authors": [
-                {
-                    "name": "OpenAPI",
-                    "homepage": "https://openapi-generator.tech"
-                }
-            ],
-            "description": "OpenAPI Specification of catapult-rest",
-            "homepage": "https://openapi-generator.tech",
-            "keywords": [
-                "api",
-                "openapi",
-                "openapi-generator",
-                "openapitools",
-                "php",
-                "rest",
-                "sdk"
-            ],
-            "support": {
-                "issues": "https://github.com/symbol-blockchain-community/symbol-rest-client-php/issues",
-                "source": "https://github.com/symbol-blockchain-community/symbol-rest-client-php/tree/v1.0.0"
-            },
-            "time": "2024-07-04T06:17:23+00:00"
         },
         {
             "name": "symbol-blockchain-community/symbol-sdk",
