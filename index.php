@@ -4,6 +4,7 @@
  * Description: A WordPress plugin for symbol transactions.
  * Version: 1.0
  * Author: toshi
+ * License: MIT
  */
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly

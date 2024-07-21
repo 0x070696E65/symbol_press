@@ -5,7 +5,6 @@ include_once(ABSPATH . 'wp-content/plugins/symbol-transactions/admin/admin-page.
 
 use Error;
 use SymbolSdk\CryptoTypes\PrivateKey;
-use SymbolSdk\CryptoTypes\PublicKey;
 use SymbolSdk\Symbol\KeyPair;
 use SymbolSdk\Symbol\Models\NetworkType;
 use SymbolSdk\Symbol\Models\PublicKey as ModelsPublicKey;
@@ -13,8 +12,6 @@ use SymbolSdk\Symbol\Models\Timestamp;
 use SymbolSdk\Symbol\Models\Transaction;
 use SymbolSdk\Facade\SymbolFacade;
 use SymbolSdk\Symbol\IdGenerator;
-use SymbolRestClient\Api\TransactionRoutesApi;
-use SymbolRestClient\Configuration;
 
 use GuzzleHttp\Client;
 use Exception;
@@ -25,35 +22,27 @@ class SymbolService{
   const TEST_NET_EXPLORER = 'https://testnet.symbol.fyi';
   const MAIN_NET_EXPLORER = 'https://symbol.fyi';
 
-  private TransactionRoutesApi $transactionRoutesApi;
   private Client $client;
   private string $networkType;
   public SymbolFacade $facade;
   public string $node;
   private int $feeMultiplier;
   private int $deadLineSeconds;
-  private string $exploer;
 
   public function __construct()
   {
     $data = get_my_plugin_data();
     if (!$data) throw new Error('data is not set, please set datas on admin page');
 
-    $config = new Configuration();
     $this->node = esc_html($data->node);
-    $config->setHost($this->node);
-    $this->client = new Client();
-    $this->transactionRoutesApi = new TransactionRoutesApi($this->client, $config);
     $nodeHealth = self::getRequest($this->node . "/node/health");
     if($nodeHealth['status']['apiNode'] != "up" || $nodeHealth['status']['db'] != "up" )
       throw new Exception('node is not good health');
     $nodeInfo = $this->getRequest($this->node . "/node/info");
     if($nodeInfo['networkIdentifier'] == 152) {
       $this->networkType = 'testnet';
-      $this->exploer = self::TEST_NET_EXPLORER;
     } else {
       $this->networkType = 'mainnet';
-      $this->exploer = self::MAIN_NET_EXPLORER;
     }
     $this->facade = new SymbolFacade($this->networkType);
     $this->feeMultiplier = esc_html($data->fee_multi_plier);
@@ -101,23 +90,6 @@ class SymbolService{
       }
     } catch (Exception $e) {
       throw new Exception($e->getMessage());
-    }
-  }
-
-  public function accounceTransaction($signedTransaction){
-    try {
-      $this->transactionRoutesApi->announceTransaction($signedTransaction['payload']);
-      $signedTransactionHash = $signedTransaction["hash"];
-      $explorerLink = "<a href='{$this->exploer}/transactions/{$signedTransactionHash}' target='_blank'>Explorer</a>";
-      return [
-        "isSuccess" => true,
-        "message" => $explorerLink
-      ];
-    } catch (Exception $e) {
-      return [
-        "isSuccess" => false,
-        "message" => $e->getMessage()
-      ];
     }
   }
 
