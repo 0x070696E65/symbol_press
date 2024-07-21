@@ -1,3 +1,17 @@
+# インストール
+
+```sh
+git clone https://github.com/0x070696E65/symbol_press.git
+```
+
+`symbol_press`フォルダを以下に移動
+
+```
+/wordpress/wp-content/plugins/
+```
+
+WordPress 管理画面よりプラグインの有効化
+
 # 初期設定
 
 プラグインを有効化したらサイドバーより[Symbol Press]をクリックして初期設定を行います。
