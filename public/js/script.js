@@ -108,8 +108,6 @@ jQuery(document).ready(function ($) {
         formData['transactions'].push(innerFormData)
       })
 
-    console.log(formData)
-
     $.ajax({
       url: symbol_press.ajax_url,
       type: 'post',
@@ -118,7 +116,6 @@ jQuery(document).ready(function ($) {
         if (response.success) {
           try {
             if (response.data.sign_mode == 'SSS') {
-              console.log(response.data.payload)
               window.SSS.setTransactionByPayload(response.data.payload)
               const signedTx = await window.SSS.requestSign()
               const explorerLink = `<a href='${
