@@ -92,8 +92,7 @@ class MosaicDefinitionTransaction extends BaseTransaction {
   public static function drawForm($atts){
     try {
       if(isset($atts['address']) && $atts['address'] != '') {
-          $symbolService = new SymbolService();
-          $mosaicId = $symbolService->generateMosaicId($atts['address']);
+          $mosaicId = SymbolService::generateMosaicId($atts['address']);
           $atts['mosaic_id'] = $mosaicId['id'];
           $atts['mosaic_nonce'] = $mosaicId['nonce'];
       }

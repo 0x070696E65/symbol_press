@@ -10,8 +10,7 @@ class AjaxHandler{
     check_ajax_referer('generate_mosaic_id_nonce', 'nonce');
 
     $address = sanitize_text_field($_POST['address']);
-    $symbolService = new SymbolService();
-    $mosaicId = $symbolService->generateMosaicId($address);
+    $mosaicId = SymbolService::generateMosaicId($address);
 
     wp_send_json_success(array(
       'mosaic_id' => $mosaicId['id'],

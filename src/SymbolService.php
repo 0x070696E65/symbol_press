@@ -96,7 +96,7 @@ class SymbolService{
     }
   }
 
-  public function generateMosaicId(string $address){
+  public static function generateMosaicId(string $address){
     $mid = IdGenerator::generateMosaicId(new UnresolvedAddress($address));
     return [
       "id" => Converter::intToHex($mid['id'], 8, true),
