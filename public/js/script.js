@@ -160,7 +160,7 @@ jQuery(document).ready(function ($) {
                 } else {
                   console.log(wsResponse)
                   if (wsResponse.topic == `status/${address}`) {
-                    $('#symbol-press-result-' + formIdSuffix).html(wsResponse.data.code)
+                    showErrorMessage(wsResponse.data.code, formIdSuffix)
                     socket.close()
                     $('#symbol-press-result-' + formIdSuffix + ' .spinner').remove()
                   } else if (wsResponse.topic == `confirmedAdded/${address}`) {
