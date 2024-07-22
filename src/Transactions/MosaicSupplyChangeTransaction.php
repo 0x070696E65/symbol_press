@@ -10,7 +10,7 @@ use SymbolSdk\Symbol\Models\PublicKey;
 use SymbolSdk\Symbol\Models\Amount;
 use SymbolSdk\Symbol\Models\UnresolvedMosaicId;
 use SymbolSdk\Symbol\Models\MosaicSupplyChangeAction;
-
+use Exception;
 
 class MosaicSupplyChangeTransaction extends BaseTransaction {
   private const FIELDS = [
@@ -58,7 +58,11 @@ class MosaicSupplyChangeTransaction extends BaseTransaction {
   }
 
   public static function drawForm($atts){
-    $tx = new self($atts);
-    return $tx->_drawForm();
+    try {
+      $tx = new self($atts);
+      return $tx->_drawForm();
+    } catch (Exception $e) {
+      return '<div class="error-message">エラーが発生しました: ' . esc_html($e->getMessage()) . '</div>';
+    }
   }
 }

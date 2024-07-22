@@ -11,6 +11,7 @@ use SymbolSdk\Symbol\Models\MosaicId;
 use SymbolSdk\Symbol\Models\MosaicFlags;
 use SymbolSdk\Symbol\Models\BlockDuration;
 use SymbolSdk\Symbol\Models\MosaicNonce;
+use Exception;
 
 class MosaicDefinitionTransaction extends BaseTransaction {
   private const FIELDS = [
@@ -89,13 +90,17 @@ class MosaicDefinitionTransaction extends BaseTransaction {
   }
 
   public static function drawForm($atts){
-    if(isset($atts['address']) && $atts['address'] != '') {
-      $symbolService = new SymbolService();
-      $mosaicId = $symbolService->generateMosaicId($atts['address']);
-      $atts['mosaic_id'] = $mosaicId['id'];
-      $atts['mosaic_nonce'] = $mosaicId['nonce'];
+    try {
+      if(isset($atts['address']) && $atts['address'] != '') {
+          $symbolService = new SymbolService();
+          $mosaicId = $symbolService->generateMosaicId($atts['address']);
+          $atts['mosaic_id'] = $mosaicId['id'];
+          $atts['mosaic_nonce'] = $mosaicId['nonce'];
+      }
+      $tx = new self($atts);
+      return $tx->_drawForm();
+    } catch (Exception $e) {
+      return '<div class="error-message">エラーが発生しました: ' . esc_html($e->getMessage()) . '</div>';
     }
-    $tx = new self($atts);
-    return $tx->_drawForm();
   }
 }

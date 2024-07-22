@@ -10,6 +10,7 @@ use SymbolSdk\Symbol\Models\NetworkType;
 use SymbolSdk\Symbol\Models\PublicKey;
 use SymbolSdk\Symbol\Models\UnresolvedAddress;
 use SymbolSdk\Symbol\Models\NamespaceId;
+use Exception;
 
 class NamespaceMetadataTransaction extends BaseTransaction {
   private const FIELDS = [
@@ -63,7 +64,11 @@ class NamespaceMetadataTransaction extends BaseTransaction {
   }
 
   public static function drawForm($atts){
-    $tx = new self($atts);
-    return $tx->_drawForm();
+    try {
+      $tx = new self($atts);
+      return $tx->_drawForm();
+    } catch (Exception $e) {
+      return '<div class="error-message">エラーが発生しました: ' . esc_html($e->getMessage()) . '</div>';
+    }
   }
 }

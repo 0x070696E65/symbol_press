@@ -2,7 +2,7 @@
 
 namespace SymbolPress\Transactions;
 
-use Error;
+use Exception;
 use SymbolPress\SymbolService;
 use SymbolPress\Utils;
 
@@ -116,21 +116,26 @@ abstract class BaseTransaction {
   }
 
   protected function _drawForm($innerTransactions = null, $hasAddButton = true){
-    ob_start();
-    extract([
-      'fields' => $this->fields,
-      'isInner' => $this->isInner,
-      'innerTransactions' => $innerTransactions,
-      'hasAddButton' => $hasAddButton,
-      'isShortCode' => $this->is_short_code,
-      'label' => $this->label,
-      'buttonText' => $this->button_text,
-      'buttonColor' => $this->button_color
-    ]);
+    try {
+        ob_start();
+        extract([
+            'fields' => $this->fields,
+            'isInner' => $this->isInner,
+            'innerTransactions' => $innerTransactions,
+            'hasAddButton' => $hasAddButton,
+            'isShortCode' => $this->is_short_code,
+            'label' => $this->label,
+            'buttonText' => $this->button_text,
+            'buttonColor' => $this->button_color
+        ]);
 
-    include plugin_dir_path(__FILE__) . '../form-template.php';
-    return ob_get_clean();
-  }
+        include plugin_dir_path(__FILE__) . '../form-template.php';
+        return ob_get_clean();
+    } catch (Exception $e) {
+        ob_end_clean();
+        return '<div class="error-message">エラーが発生しました: ' . esc_html($e->getMessage()) . '</div>';
+    }
+}
 
   public static function excuteTransaction(array $arrgs, bool $isEmbedded = false, $cosignatureCount = 0){
     $symbolService = new SymbolService();

@@ -9,6 +9,7 @@ use SymbolSdk\Symbol\Models\AccountRestrictionFlags;
 use SymbolSdk\Symbol\Models\NetworkType;
 use SymbolSdk\Symbol\Models\PublicKey;
 use SymbolSdk\Symbol\Models\UnresolvedAddress;
+use Exception;
 
 class AccountMosaicRestrictionTransaction extends BaseTransaction {
   private const FIELDS = [
@@ -81,7 +82,11 @@ class AccountMosaicRestrictionTransaction extends BaseTransaction {
   }
 
   public static function drawForm($atts){
-    $tx = new self($atts);
-    return $tx->_drawForm();
+    try {
+      $tx = new self($atts);
+      return $tx->_drawForm();
+    } catch (Exception $e) {
+      return '<div class="error-message">エラーが発生しました: ' . esc_html($e->getMessage()) . '</div>';
+    }
   }
 }

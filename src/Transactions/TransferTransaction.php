@@ -2,7 +2,6 @@
 
 namespace SymbolPress\Transactions;
 
-use Error;
 use SymbolPress\SymbolService;
 use SymbolSdk\Symbol\Models\Amount;
 use SymbolSdk\Symbol\Models\TransferTransactionV1;
@@ -12,6 +11,7 @@ use SymbolSdk\Symbol\Models\PublicKey;
 use SymbolSdk\Symbol\Models\UnresolvedMosaic;
 use SymbolSdk\Symbol\Models\UnresolvedMosaicId;
 use SymbolSdk\Symbol\Models\UnresolvedAddress;
+use Exception;
 
 class TransferTransaction extends BaseTransaction {
   private const FIELDS = [
@@ -76,8 +76,12 @@ class TransferTransaction extends BaseTransaction {
   }
 
   public static function drawForm($atts){
-    $tx = new self($atts);
-    return $tx->_drawForm();
+    try {
+      $tx = new self($atts);
+      return $tx->_drawForm();
+    } catch (Exception $e) {
+      return '<div class="error-message">エラーが発生しました: ' . esc_html($e->getMessage()) . '</div>';
+    }
   }
 }
 

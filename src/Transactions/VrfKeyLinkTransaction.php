@@ -8,6 +8,7 @@ use SymbolSdk\Symbol\Models\EmbeddedVrfKeyLinkTransactionV1;
 use SymbolSdk\Symbol\Models\NetworkType;
 use SymbolSdk\Symbol\Models\PublicKey;
 use SymbolSdk\Symbol\Models\LinkAction;
+use Exception;
 
 class VrfKeyLinkTransaction extends BaseTransaction {
   private const FIELDS = [
@@ -48,7 +49,11 @@ class VrfKeyLinkTransaction extends BaseTransaction {
   }
 
   public static function drawForm($atts){
-    $tx = new self($atts);
-    return $tx->_drawForm();
+    try {
+      $tx = new self($atts);
+      return $tx->_drawForm();
+    } catch (Exception $e) {
+      return '<div class="error-message">エラーが発生しました: ' . esc_html($e->getMessage()) . '</div>';
+    }
   }
 }

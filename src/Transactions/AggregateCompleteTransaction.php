@@ -6,6 +6,7 @@ use SymbolPress\SymbolService;
 use SymbolPress\Transactions;
 use SymbolSdk\Symbol\Models\AggregateCompleteTransactionV2;
 use SymbolPress\Utils;
+use Exception;
 
 class AggregateCompleteTransaction extends BaseTransaction {
   private const FIELDS = [];
@@ -42,16 +43,20 @@ class AggregateCompleteTransaction extends BaseTransaction {
   }
 
   public static function drawForm($atts, $innerTransactions = null){
-    $atts = shortcode_atts(array(
-      'has_add_button' => 'true'
-    ), $atts);
-    if ($innerTransactions) {
-      $innerTransactions = self::add_attributes_to_transaction_shortcode($innerTransactions);
+    try {
+      $atts = shortcode_atts(array(
+        'has_add_button' => 'true'
+      ), $atts);
+      if ($innerTransactions) {
+        $innerTransactions = self::add_attributes_to_transaction_shortcode($innerTransactions);
+      }
+  
+      $innerTransactions = do_shortcode($innerTransactions);
+      $tx = new Transactions\AggregateCompleteTransaction($atts);
+      return $tx->_drawForm($innerTransactions, $atts['has_add_button']);
+    } catch (Exception $e) {
+      return '<div class="error-message">エラーが発生しました: ' . esc_html($e->getMessage()) . '</div>';
     }
-
-    $innerTransactions = do_shortcode($innerTransactions);
-    $tx = new Transactions\AggregateCompleteTransaction($atts);
-    return $tx->_drawForm($innerTransactions, $atts['has_add_button']);
   }
 
   private static function add_attributes_to_transaction_shortcode($shortcode) {

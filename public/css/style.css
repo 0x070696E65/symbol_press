@@ -107,3 +107,9 @@
   margin: 20px auto;
   width: 256px;
 }
+
+.error-message {
+  color: #dd0000;
+  font-weight: bold;
+  font-size: 0.8em;
+}
