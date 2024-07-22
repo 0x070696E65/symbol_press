@@ -55,7 +55,7 @@ class AggregateCompleteTransaction extends BaseTransaction {
       $tx = new Transactions\AggregateCompleteTransaction($atts);
       return $tx->_drawForm($innerTransactions, $atts['has_add_button']);
     } catch (Exception $e) {
-      return '<div class="error-message">エラーが発生しました: ' . esc_html($e->getMessage()) . '</div>';
+      return self::showErrorMessage($e);
     }
   }
 

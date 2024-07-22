@@ -70,7 +70,7 @@ class MosaicAddressRestrictionTransaction extends BaseTransaction {
       $tx = new self($atts);
       return $tx->_drawForm();
     } catch (Exception $e) {
-      return '<div class="error-message">エラーが発生しました: ' . esc_html($e->getMessage()) . '</div>';
+      return self::showErrorMessage($e);
     }
   }
 }

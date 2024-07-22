@@ -133,9 +133,9 @@ abstract class BaseTransaction {
         return ob_get_clean();
     } catch (Exception $e) {
         ob_end_clean();
-        return '<div class="error-message">エラーが発生しました: ' . esc_html($e->getMessage()) . '</div>';
+        self::showErrorMessage($e);
     }
-}
+  }
 
   public static function excuteTransaction(array $arrgs, bool $isEmbedded = false, $cosignatureCount = 0){
     $symbolService = new SymbolService();
@@ -145,6 +145,10 @@ abstract class BaseTransaction {
       'payload' => strtoupper(bin2hex($transaction->serialize())),
       'node' => $symbolService->node
     ];
+  }
+
+  protected static function showErrorMessage(Exception $e){
+    return '<div class="error-message">エラーが発生しました: ' . esc_html($e->getMessage()) . '</div>';
   }
 
   abstract public function getName();
