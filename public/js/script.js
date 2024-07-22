@@ -194,18 +194,26 @@ jQuery(document).ready(function ($) {
               $('#symbol-press-result-' + formIdSuffix + ' .spinner').remove()
             }
           } catch (e) {
-            $('#symbol-press-result-' + formIdSuffix).html('<p>Error: ' + e.message + '</p>')
+            showErrorMessage(e.message, formIdSuffix)
           }
         } else {
-          $('#symbol-press-result-' + formIdSuffix).html('<p>Error: ' + response.data + '</p>')
+          showErrorMessage(response.data, formIdSuffix)
         }
       },
       error: function (xhr, status, error) {
         console.log(error)
-        $('#symbol-press-result-' + formIdSuffix).html('<p>An error occurred: ' + error + '</p>')
+        showErrorMessage(error, formIdSuffix)
       },
     })
   })
+
+  function showErrorMessage(error, formIdSuffix) {
+    var $target = $('#symbol-press-result-' + formIdSuffix)
+    $target.html('<p>Error: ' + error + '</p>')
+    if ($target.length) {
+      $target.addClass('error-message')
+    }
+  }
 })
 
 function waitThreeSeconds(milliSecond) {
