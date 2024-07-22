@@ -1,8 +1,6 @@
 <?php
 namespace SymbolPress;
 
-include_once(ABSPATH . 'wp-content/plugins/symbol-transactions/admin/admin-page.php');
-
 use Error;
 use SymbolSdk\CryptoTypes\PrivateKey;
 use SymbolSdk\Symbol\KeyPair;
@@ -31,10 +29,15 @@ class SymbolService{
 
   public function __construct()
   {
-    $data = get_my_plugin_data();
-    if (!$data) throw new Error('data is not set, please set datas on admin page');
+    $node = get_option('node', '' );
+    $fee_multi_plier = get_option('fee_multi_plier', '100' );
+    $deadline_seconds = get_option('deadline_seconds', '3600' );
 
-    $this->node = esc_html($data->node);
+    if ($node == '') throw new Error('data is not set, please set datas on admin page');
+
+    $this->node = esc_html($node);
+    $this->client = new Client();
+
     $nodeHealth = self::getRequest($this->node . "/node/health");
     if($nodeHealth['status']['apiNode'] != "up" || $nodeHealth['status']['db'] != "up" )
       throw new Exception('node is not good health');
@@ -45,8 +48,8 @@ class SymbolService{
       $this->networkType = 'mainnet';
     }
     $this->facade = new SymbolFacade($this->networkType);
-    $this->feeMultiplier = esc_html($data->fee_multi_plier);
-    $this->deadLineSeconds = esc_html($data->deadline_seconds);
+    $this->feeMultiplier = esc_html($fee_multi_plier);
+    $this->deadLineSeconds = esc_html($deadline_seconds);
   }
 
   public function createTransactionHeader(Transaction &$transaction, $arrgs, $isEmbedded = false){

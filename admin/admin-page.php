@@ -6,65 +6,25 @@ function symbol_press_add_admin_menu() {
         'Symbol Press Settings', 
         'Symbol Press', 
         'manage_options', 
-        'my-plugin', 
-        'my_plugin_page',
+        'symbol-press', 
+        'symbol_press_page',
     );
 }
 add_action('admin_menu', 'symbol_press_add_admin_menu');
 
-function get_my_plugin_data() {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'symbol_press_table';
-
-    $data = $wpdb->get_row("SELECT * FROM $table_name ORDER BY id LIMIT 1");
-    return $data;
-}
-
-function my_plugin_page() {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'symbol_press_table';
-
+function symbol_press_page() {
     // フォームが送信された場合の処理
     if (isset($_POST['submit'])) {
-        $node = sanitize_text_field($_POST['node']);
-        $fee_multi_plier = intval($_POST['fee_multi_plier']);
-        $deadline_seconds = intval($_POST['deadline_seconds']);
-
-        // テーブルにデータがあるか確認
-        $id = $wpdb->get_var("SELECT id FROM $table_name ORDER BY id LIMIT 1");
-
-        if ($id) {
-            // データが存在する場合は更新
-            $wpdb->update(
-                $table_name,
-                array(
-                    'node' => $node,
-                    'fee_multi_plier' => $fee_multi_plier,
-                    'deadline_seconds' => $deadline_seconds
-                ),
-                array( 'id' => $id )
-            );
-        } else {
-            // データが存在しない場合は挿入
-            $wpdb->insert(
-                $table_name,
-                array(
-                    'node' => $node,
-                    'fee_multi_plier' => $fee_multi_plier,
-                    'deadline_seconds' => $deadline_seconds
-                )
-            );
-        }
-        
+        update_option('node', sanitize_text_field($_POST['node']), 'no' );
+        update_option('fee_multi_plier', sanitize_text_field($_POST['fee_multi_plier']), 'no' );
+        update_option('deadline_seconds', sanitize_text_field($_POST['deadline_seconds']), 'no' );
         echo "<div class='updated'><p>Data saved</p></div>";
     }
 
     // 保存されたデータを取得
-    $data = $wpdb->get_row("SELECT * FROM $table_name ORDER BY id LIMIT 1");
-
-    $node = isset($data->node) ? $data->node : '';
-    $fee_multi_plier = isset($data->fee_multi_plier) ? $data->fee_multi_plier : '100';
-    $deadline_seconds = isset($data->deadline_seconds) ? $data->deadline_seconds : '3600';
+    $node = get_option('node', '' );
+    $fee_multi_plier = get_option('fee_multi_plier', '100' );
+    $deadline_seconds = get_option('deadline_seconds', '3600' );
 
     ?>
     <div class="wrap">
